@@ -14,7 +14,7 @@ Every other Sunday. Each run is independent: read this file and `data.json` fres
 ## Steps for each run
 
 1. Read `data.json`. For each company, note the reporting period in `companies[].period`
-   (e.g. `FY2024`, `H1 2026`).
+   (e.g. `FY2025`, `LTM Jun 2026`).
 2. For each of the 10 companies, look for results published **after** that period:
    quarterly, half-year or annual reports, plus investor presentations for capacity
    (MW), customer and headcount figures.
