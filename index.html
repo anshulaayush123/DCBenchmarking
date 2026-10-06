@@ -6,50 +6,76 @@
 <title>Data Center Operators — Benchmarking</title>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-datalabels/2.2.0/chartjs-plugin-datalabels.min.js"></script>
 <style>
 :root{
-  --bg:#0B1119; --panel:#121B27; --panel2:#0E1620; --line:#22303F;
-  --amber:#E8A33D; --cyan:#57C7B8; --text:#E7EDF3; --muted:#8FA0AF;
-  --danger:#E2685A; --good:#57C7B8;
+  --bg:#091C54; --panel:#0E2260; --panel2:#071646; --line:#25256B;
+  --violet:#828EFF; --violetlt:#7380E7; --turq:#62E0ED; --turqlt:#58C9D5; --silver:#A9B7C7; --silverdk:#71739E;
+  --text:#FFFFFF; --muted:#999AB8;
   padding-top: env(safe-area-inset-top,0px); padding-bottom: env(safe-area-inset-bottom,0px);
 }
-@media (prefers-color-scheme: light){ :root:not([data-theme="dark"]){ --bg:#0B1119; --panel:#121B27; --panel2:#0E1620; --line:#22303F; --text:#E7EDF3; --muted:#8FA0AF; } }
+@media (prefers-color-scheme: light){ :root:not([data-theme="dark"]){ --bg:#091C54; --panel:#0E2260; --panel2:#071646; --line:#25256B; --text:#FFFFFF; --muted:#999AB8; } }
 *{box-sizing:border-box;}
 html{scroll-padding-top:env(safe-area-inset-top,0px);}
 body{margin:0;background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100%;}
-.wrap{max-width:1240px;margin:0 auto;padding:36px 20px 80px;}
+.wrap{max-width:1240px;margin:0 auto;padding:36px 16px 80px;}
 header{margin-bottom:28px;}
-.eyebrow{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--amber);letter-spacing:.04em;margin-bottom:8px;}
-h1{font-family:'Space Grotesk',sans-serif;font-size:clamp(26px,4vw,38px);font-weight:700;margin:0 0 10px;line-height:1.15;}
+.eyebrow{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--turq);letter-spacing:.04em;margin-bottom:8px;font-weight:600;}
+h1{font-family:'Space Grotesk',sans-serif;font-size:clamp(26px,4vw,38px);font-weight:700;margin:0 0 10px;line-height:1.15;color:var(--text);}
 .sub{color:var(--muted);font-size:15px;max-width:640px;line-height:1.5;}
-.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:6px;overflow:hidden;margin:26px 0;}
-.stat{background:var(--panel);padding:16px 18px;}
-.stat .n{font-family:'IBM Plex Mono',monospace;font-size:22px;font-weight:600;color:var(--cyan);}
-.stat .l{font-size:12px;color:var(--muted);margin-top:4px;}
-.panel{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:20px;margin-bottom:20px;}
-.panel h2{font-family:'Space Grotesk',sans-serif;font-size:17px;margin:0 0 4px;font-weight:600;}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:20px;margin-bottom:20px;min-width:0;}
+.filterbar{position:relative;z-index:50;}
+.filter-head{display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap;}
+.filter-label{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--turq);letter-spacing:.04em;font-weight:700;margin-bottom:4px;}
+.ms-wrap{position:relative;}
+.ms-btn{font-family:'IBM Plex Mono',monospace;font-size:13px;padding:10px 16px;border:1px solid var(--turq);border-radius:8px;background:var(--panel2);color:var(--text);cursor:pointer;display:flex;align-items:center;gap:10px;min-width:190px;justify-content:space-between;}
+.ms-btn:hover{background:var(--line);}
+.ms-caret{color:var(--turq);transition:.15s;}
+.ms-wrap.open .ms-caret{transform:rotate(180deg);}
+.ms-panel{display:none;position:absolute;right:0;top:calc(100% + 8px);background:var(--panel2);border:1px solid var(--turq);border-radius:8px;padding:10px;min-width:240px;max-height:320px;overflow-y:auto;box-shadow:0 12px 30px rgba(0,0,0,.4);z-index:60;}
+.ms-wrap.open .ms-panel{display:block;}
+.ms-actions{display:flex;gap:14px;padding:4px 6px 10px;border-bottom:1px solid var(--line);margin-bottom:6px;}
+.ms-actions button{background:none;border:none;color:var(--turq);font-family:'IBM Plex Mono',monospace;font-size:11.5px;cursor:pointer;padding:0;font-weight:600;}
+.ms-item{display:flex;align-items:center;gap:10px;padding:7px 6px;border-radius:5px;cursor:pointer;font-size:13px;}
+.ms-item:hover{background:var(--line);}
+.ms-item .dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.logo{display:inline-block;width:24px;height:24px;border-radius:5px;background:#fff;object-fit:contain;padding:2px;flex-shrink:0;vertical-align:middle;}
+th .co{display:inline-flex;align-items:center;gap:6px;}
+.ms-item input{accent-color:var(--turq);}
+.ms-item span.nm{flex:1;}
+.ms-item span.yr{color:var(--muted);font-family:'IBM Plex Mono',monospace;font-size:11px;}
+.panel h2{font-family:'Space Grotesk',sans-serif;font-size:17px;margin:0 0 4px;font-weight:600;color:var(--text);}
 .panel .desc{font-size:13px;color:var(--muted);margin-bottom:16px;}
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
-@media(max-width:820px){.grid2{grid-template-columns:1fr;}}
-.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px;}
-.chip{font-family:'IBM Plex Mono',monospace;font-size:12px;padding:6px 12px;border:1px solid var(--line);border-radius:20px;cursor:pointer;color:var(--muted);background:var(--panel2);user-select:none;transition:.15s;}
-.chip.on{color:var(--bg);background:var(--cyan);border-color:var(--cyan);font-weight:600;}
-.toggle{display:inline-flex;align-items:center;gap:8px;font-size:12px;color:var(--muted);font-family:'IBM Plex Mono',monospace;margin-bottom:14px;cursor:pointer;}
-.toggle input{accent-color:var(--amber);}
-canvas{max-height:340px;}
-.tabs{display:flex;gap:2px;margin-bottom:16px;border-bottom:1px solid var(--line);}
+/* one chart per row so company names fit horizontally under each bar group */
+.grid2{display:grid;grid-template-columns:minmax(0,1fr);gap:0;}
+@media(max-width:820px){.grid2{grid-template-columns:minmax(0,1fr);}}
+.chartbox{position:relative;height:320px;}
+.chartbox.tall{height:360px;}
+.tabs{display:flex;gap:2px;margin-bottom:16px;border-bottom:1px solid var(--line);flex-wrap:wrap;}
 .tab{font-family:'IBM Plex Mono',monospace;font-size:12.5px;padding:9px 16px;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;}
-.tab.on{color:var(--amber);border-bottom-color:var(--amber);}
+.tab.on{color:var(--turq);border-bottom-color:var(--turq);font-weight:600;}
 .tblwrap{overflow-x:auto;border:1px solid var(--line);border-radius:4px;}
 table{border-collapse:collapse;width:100%;min-width:900px;font-family:'IBM Plex Mono',monospace;font-size:12.5px;}
 th,td{padding:8px 10px;text-align:right;white-space:nowrap;border-bottom:1px solid var(--line);}
 th:first-child,td:first-child{text-align:left;position:sticky;left:0;background:var(--panel);font-family:'Inter',sans-serif;font-size:12.5px;color:var(--text);z-index:1;min-width:150px;}
-thead th{color:var(--amber);font-weight:600;background:var(--panel2);position:sticky;top:0;z-index:2;}
+thead th{color:var(--turq);font-weight:700;background:var(--panel2);position:sticky;top:0;z-index:2;}
 thead th:first-child{z-index:3;}
-tbody tr:hover td{background:#16202D;}
+tbody tr:hover td{background:var(--panel2);}
 td{color:var(--text);}
-td.neg{color:var(--danger);}
+td.neg{color:#CC0000;font-weight:600;}
+tbody td:first-child{background:var(--panel2);color:var(--turq);font-weight:700;}
 .foot{margin-top:28px;font-size:12px;color:var(--muted);font-family:'IBM Plex Mono',monospace;}
+.ribbon{display:flex;gap:4px;border-bottom:1px solid var(--line);margin-bottom:24px;overflow-x:auto;}
+.ribbon-item{font-family:'Space Grotesk',sans-serif;font-size:14.5px;font-weight:600;padding:12px 18px;color:var(--muted);cursor:pointer;border-bottom:3px solid transparent;user-select:none;transition:.15s;white-space:nowrap;}
+.ribbon-item:hover{color:var(--text);}
+.ribbon-item.on{color:var(--turq);border-bottom-color:var(--turq);}
+.view{display:none;}
+.view.on{display:block;}
+.pills{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;}
+.pill{font-family:'IBM Plex Mono',monospace;font-size:12.5px;padding:7px 14px;border:1px solid var(--line);border-radius:20px;cursor:pointer;color:var(--muted);background:var(--panel2);user-select:none;transition:.15s;}
+.pill:hover{color:var(--text);}
+.pill.on{color:var(--bg);background:var(--turq);border-color:var(--turq);font-weight:600;}
+.sect{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--turq);letter-spacing:.06em;font-weight:700;margin:30px 0 12px;}
 </style>
 </head>
 <body>
@@ -60,202 +86,445 @@ td.neg{color:var(--danger);}
 <div class="sub">Capacity, financials, leverage and headcount across 10 operators — from hyperscale colocation incumbents to newly listed AI-cloud infrastructure players. Figures are the latest reported fiscal period per company.</div>
 </header>
 
-<div class="stats" id="stats"></div>
-
-<div class="panel">
-  <h2>Installed vs. pipeline capacity</h2>
-  <div class="desc">Live IT capacity today against contracted/under-development pipeline, in megawatts.</div>
-  <div class="chips" id="chipsCap"></div>
-  <canvas id="chartCap"></canvas>
-</div>
-
-<div class="grid2">
-  <div class="panel">
-    <h2>Revenue vs. EBITDA margin</h2>
-    <div class="desc">Bars = revenue ($M, log scale). Line = EBITDA margin (%).</div>
-    <label class="toggle"><input type="checkbox" id="toggleMeta"> Include Meta (200,966M revenue skews scale)</label>
-    <canvas id="chartRev"></canvas>
-  </div>
-  <div class="panel">
-    <h2>Leverage — Net Debt / EBITDA</h2>
-    <div class="desc">Turns of net debt to EBITDA. Negative EBITDA or N/A companies flagged separately.</div>
-    <canvas id="chartLev"></canvas>
+<div class="panel filterbar">
+  <div class="filter-head">
+    <div>
+      <div class="filter-label">OPERATOR SELECTION</div>
+      <div class="desc" style="margin-bottom:0">Pick operators — the choice applies to every chart and table on all three tabs.</div>
+    </div>
+    <div class="ms-wrap" id="msWrap">
+      <button class="ms-btn" id="msBtn" type="button">All 10 selected <span class="ms-caret">▾</span></button>
+      <div class="ms-panel">
+        <div class="ms-actions"><button id="msAll" type="button">Select all</button><button id="msNone" type="button">Clear all</button></div>
+        <div id="msList"></div>
+      </div>
+    </div>
   </div>
 </div>
 
-<div class="panel">
-  <h2>Headcount function mix</h2>
-  <div class="desc">Share of employees by function, 100% stacked.</div>
-  <canvas id="chartFTE" style="max-height:280px"></canvas>
+<div class="ribbon" id="ribbon">
+  <div class="ribbon-item on" data-view="Commercial">Commercial</div>
+  <div class="ribbon-item" data-view="Financial">Financial</div>
+  <div class="ribbon-item" data-view="FTE / Headcount">FTE / Headcount</div>
 </div>
 
-<div class="panel">
-  <h2>Full data table</h2>
-  <div class="desc">All benchmarked metrics by company and category.</div>
-  <div class="tabs" id="tabs"></div>
-  <div class="tblwrap"><table id="dataTable"></table></div>
+<!-- COMMERCIAL -->
+<div class="view on" data-view="Commercial">
+  <div class="panel">
+    <h2>Installed vs. pipeline capacity</h2>
+    <div class="desc">Live IT capacity today against contracted/under-development pipeline, in megawatts. Bars marked // are outliers shortened to fit — the label shows the true value.</div>
+    <div class="chartbox tall"><canvas id="cCap"></canvas></div>
+  </div>
+  <div class="grid2">
+    <div class="panel">
+      <h2>Return on invested capital</h2>
+      <div class="desc">ROIC (%). N/A companies shown as grey zero bars.</div>
+      <div class="chartbox"><canvas id="cRoic"></canvas></div>
+    </div>
+    <div class="panel">
+      <h2>Valuation — EV / EBITDA</h2>
+      <div class="desc">Enterprise value to EBITDA multiple (x). Negative = loss-making EBITDA.</div>
+      <div class="chartbox"><canvas id="cEv"></canvas></div>
+    </div>
+  </div>
+  <div class="panel">
+    <h2>Capex — last 3Y vs. next 3Y</h2>
+    <div class="desc">In $M / $B. Next-3Y shown only where a numeric guide is disclosed. Bars marked // are outliers shortened to fit — the label shows the true value.</div>
+    <div class="chartbox tall"><canvas id="cCapex"></canvas></div>
+  </div>
+  <div class="sect">RAW DATA</div>
+  <div class="panel"><h2>Full data table</h2><div class="desc">All benchmarked metrics by company and category.</div><div class="tblhost"></div></div>
 </div>
 
-<div class="foot">Transcribed from the supplied benchmarking file. Verify figures against source before external distribution.</div>
+<!-- FINANCIAL -->
+<div class="view" data-view="Financial">
+  <div class="grid2">
+    <div class="panel">
+      <h2>Revenue vs. EBITDA margin</h2>
+      <div class="desc">Bars = revenue. Line = EBITDA margin (%). Bars marked // are outliers shortened to fit — the label shows the true value.</div>
+      <div class="chartbox"><canvas id="fRev"></canvas></div>
+    </div>
+    <div class="panel">
+      <h2>Profitability margins</h2>
+      <div class="desc">EBITDA margin vs. PAT margin (%).</div>
+      <div class="chartbox"><canvas id="fMargin"></canvas></div>
+    </div>
+  </div>
+  <div class="grid2">
+    <div class="panel">
+      <h2>Leverage — Net Debt / EBITDA</h2>
+      <div class="desc">Turns of net debt to EBITDA. N/A or not meaningful flagged in grey.</div>
+      <div class="chartbox"><canvas id="fLev"></canvas></div>
+    </div>
+    <div class="panel">
+      <h2>Leverage — Net Debt / Equity</h2>
+      <div class="desc">Balance-sheet gearing (x).</div>
+      <div class="chartbox"><canvas id="fDE"></canvas></div>
+    </div>
+  </div>
+  <div class="grid2">
+    <div class="panel">
+      <h2>3-year growth</h2>
+      <div class="desc">Revenue, EBITDA and PAT CAGR (%). Missing values omitted.</div>
+      <div class="chartbox"><canvas id="fCagr"></canvas></div>
+    </div>
+  </div>
+  <div class="panel">
+    <h2>Unit economics per MW</h2>
+    <div class="desc">$M per installed MW. Pick a metric below. Bars marked // are outliers shortened to fit — the label shows the true value.</div>
+    <div class="pills" id="mwPills"></div>
+    <div class="chartbox tall"><canvas id="fMw"></canvas></div>
+  </div>
+  <div class="grid2">
+    <div class="panel">
+      <h2>Return on equity</h2>
+      <div class="desc">RoE (%). N/A shown as grey zero bars.</div>
+      <div class="chartbox"><canvas id="fRoe"></canvas></div>
+    </div>
+    <div class="panel">
+      <h2>Net debt</h2>
+      <div class="desc">In $M / $B.</div>
+      <div class="chartbox"><canvas id="fNd"></canvas></div>
+    </div>
+  </div>
+  <div class="sect">RAW DATA</div>
+  <div class="panel"><h2>Full data table</h2><div class="desc">All benchmarked metrics by company and category.</div><div class="tblhost"></div></div>
+</div>
+
+<!-- FTE -->
+<div class="view" data-view="FTE / Headcount">
+  <div class="grid2">
+    <div class="panel">
+      <h2>Total employees</h2>
+      <div class="desc">Number of employees. Bars marked // are outliers shortened to fit — the label shows the true value.</div>
+      <div class="chartbox"><canvas id="hEmp"></canvas></div>
+    </div>
+    <div class="panel">
+      <h2>MW per FTE</h2>
+      <div class="desc">Installed/pipeline MW managed per employee.</div>
+      <div class="chartbox"><canvas id="hMw"></canvas></div>
+    </div>
+  </div>
+  <div class="panel">
+    <h2>Productivity — revenue &amp; EBITDA per FTE</h2>
+    <div class="desc">$M per employee.</div>
+    <div class="chartbox"><canvas id="hProd"></canvas></div>
+  </div>
+  <div class="panel">
+    <h2>Headcount function mix</h2>
+    <div class="desc">Share of employees by function, 100% stacked.</div>
+    <div class="chartbox" style="height:520px"><canvas id="hMix"></canvas></div>
+  </div>
+  <div class="sect">RAW DATA</div>
+  <div class="panel"><h2>Full data table</h2><div class="desc">All benchmarked metrics by company and category.</div><div class="tblhost"></div></div>
+</div>
+
 </div>
 
 <script>
-const companies = ["Equinix","Digital Realty","CoreWeave","Fermi","NextDC","Applied Digital","IREN","Hut 8","Nebius","Meta"];
-const years = ["FY2024","FY2024","FY2025","H1 2026","FY2024","FY2026","FY2026","FY2025","FY2025","FY2025"];
-const colors = ["#57C7B8","#4E9DE6","#E8A33D","#E2685A","#9B8CF2","#6BCF7F","#F2C14E","#C77DFF","#5EC8D8","#E88FB5"];
+let companies, years, colors, LOGOS, commercial, financial, fte, groups;
+const abbr = [];
+const logoImg = {};
+const logo = i=> `<img class="logo" src="${LOGOS[companies[i]]}" alt="${companies[i]} logo">`;
+// numbers live in data.json so updates never touch this page
+fetch("data.json", {cache:"no-cache"}).then(r=>r.json()).then(D=>{
+  companies = D.companies.map(c=>c.name);
+  years = D.companies.map(c=>c.period);
+  colors = D.companies.map(c=>c.color);
+  LOGOS = Object.fromEntries(D.companies.map(c=>[c.name, c.logo]));
+  const arr = g=> Object.fromEntries(Object.entries(D.metrics[g]).map(([m,byCo])=>[m, companies.map(n=> n in byCo ? byCo[n] : "N/A")]));
+  commercial = arr("Commercial"); financial = arr("Financial"); fte = arr("FTE / Headcount");
+  groups = {Commercial: commercial, Financial: financial, "FTE / Headcount": fte};
+  start();
+}).catch(e=>{ document.querySelector(".wrap").insertAdjacentHTML("beforeend", `<p style="color:#ff8080">Could not load data.json (${e}).</p>`); });
 
-const commercial = {
-  "Installed IT capacity (MW)": [1900,3100,1500,0,208,386,810,1020,170,3000],
-  "Pipeline capacity (MW)": [3000,1402,4200,17000,131.5,1410,4190,8500,2000,8800],
-  "Live vs pipeline %": ["63.3%","221.1%","35.7%","0.0%","52.0%","27.4%","19.3%","12.0%","8.5%","34.1%"],
-  "Customer concentration": ["Largest ~3%","Largest 11.5%","Microsoft 67%","TensorWave 100% of 222MW","Top 2: 46.0%","Largest 59%","Microsoft 49MW anchor","Microsoft & Meta","—","Fragmented"],
-  "EV/EBITDA": ["31.5x","35.5x","27.7x","N/A","36.9x","-76.7x","71.9x","N/A","—","15.5x"],
-  "ROIC": ["4.8%","1.6%","3.9%","N/A","-1.4%","-4.5%","-14.0%","-16.8%","-6.8%","22.0%"],
-  "Last 3Y Capex ($M)": [9731,10060,21954,1195,2382,4359,6303,851,4874,139540],
-  "Next 3Y Capex ($M)": ["13,500","—","131,743",">3,000","—","—","27,500","Multi-billion","20,000","137,500"]
-};
-const financial = {
-  "Revenue ($M)": [9300,5913,5131,0,284,611,707,235,530,200966],
-  "3Y Revenue CAGR": ["6.0%","8.0%","182.0%","N/A","18.0%","122.6%","110.8%","43.7%","N/A","19.9%"],
-  "EBITDA ($M)": [4531,2290,2408,-193,134,-169,246,-217,-65,101892],
-  "EBITDA Margin": ["48.7%","41.0%","46.9%","0.0%","47.0%","-27.7%","34.8%","-92.5%","-12.0%","50.7%"],
-  "3Y EBITDA CAGR": ["7.0%","-2.5%","200.2%","N/A","-45.0%","N/A","N/A","N/A","N/A","39.3%"],
-  "PAT ($M)": [810,588,-1167,-215,-31,-250,-703,-226,29,60458],
-  "PAT Margin": ["8.7%","10.5%","-22.7%","0.0%","-11.0%","-40.9%","-99.4%","-96.2%","5.5%","30.1%"],
-  "3Y PAT CAGR": ["17.5%","20.0%","-26.1%","N/A","-1.2%","-14.6%","N/A","N/A","N/A","37.6%"],
-  "RoE (%)": ["18.0%","2.7%","N/A","-20.7%","N/A","N/A","-23.4%","-18.9%","2.1%","30.2%"],
-  "Net Debt ($M)": [14400,12830,26661,445,144,3508,582,364,450,2305],
-  "Net Debt/EBITDA": ["3.2x","5.6x","11.1x","N/A","1.1x","-20.8x","—","-2.7x","—","0.0x"],
-  "Net Debt/Equity": ["1.0x","0.6x","8.0x","0.4x","0.1x","2.0x","0.2x","0.2x","0.1x","0.0x"],
-  "G&A costs ($M)": [1766,480,651,193,41,332.1,449.1,122.8,378.5,12152],
-  "G&A % of Revenue": ["19.0%","8.0%","12.7%","N/A","14.0%","54.3%","63.5%","52.2%","71.0%","6.1%"],
-  "PAT/MW": [0.43,0.22,-1.33,-0.97,-0.15,-0.48,-0.87,-0.22,0.17,20.15],
-  "Net debt/MW": [7.58,4.75,29.62,2.01,0.69,9.09,0.72,0.36,2.64,0.77],
-  "EBITDA/MW": [2.38,0.74,2.68,-0.87,0.64,-0.17,0.3,-0.21,-0.38,33.96],
-  "FCF/MW": [0.3,0.63,-8.06,-3.07,-3.81,-7.19,"—",-0.34,-21.65,15.37],
-  "Capex/MW": [4.5,14.27,11.45,2.82,4.37,7.88,5.49,0.2,23.92,24.07]
-};
-const fte = {
-  "MW/FTE": [0.14,0.72,0.39,3.17,0.46,1.51,1.18,4.11,0.12,0.04],
-  "Revenue ($M)/FTE": [0.67,1.38,2.34,0.00,0.63,2.39,1.03,0.95,0.39,2.55],
-  "EBITDA ($M)/FTE": [0.33,0.53,1.10,-2.76,0.30,-0.66,0.36,-0.88,-0.05,1.29],
-  "Total employees": [13931,4282,2189,70,448,256,685,248,1371,78865],
-  "Sales & BD %": [20,18,9,18,27,9,11,12,13,10],
-  "IT %": [16,14,26,5,20,16,15,16,17,9],
-  "Operations %": [20,8,13,28,6,24,28,24,10,9],
-  "Others %": [10,19,11,10,13,17,11,15,13,12],
-  "Engineering %": [24,32,28,9,22,16,18,15,37,55]
-};
-const groups = {Commercial: commercial, Financial: financial, "FTE / Headcount": fte};
+function start(){
 
-Chart.defaults.color = "#8FA0AF";
-Chart.defaults.borderColor = "#22303F";
+Chart.register(ChartDataLabels);
+Chart.defaults.color = "#999AB8";
+Chart.defaults.borderColor = "#25256B";
 Chart.defaults.font.family = "'IBM Plex Mono', monospace";
-Chart.defaults.font.size = 11;
+Chart.defaults.font.size = 13;
+Chart.defaults.maintainAspectRatio = false;
+Chart.defaults.plugins.datalabels.display = false;
 
-// stat strip
-const totalInstalled = commercial["Installed IT capacity (MW)"].reduce((a,b)=>a+b,0);
-const totalPipeline = commercial["Pipeline capacity (MW)"].reduce((a,b)=>a+b,0);
-const totalRevExMeta = financial["Revenue ($M)"].slice(0,9).reduce((a,b)=>a+b,0);
-document.getElementById("stats").innerHTML = [
-  [totalInstalled.toLocaleString(), "MW installed, all 10 operators"],
-  [totalPipeline.toLocaleString(), "MW in pipeline"],
-  ["$"+totalRevExMeta.toLocaleString()+"M", "Combined revenue, ex-Meta"],
-  ["10", "Operators benchmarked"]
-].map(([n,l])=>`<div class="stat"><div class="n">${n}</div><div class="l">${l}</div></div>`).join("");
-
-// capacity chips + chart
-let capSel = companies.map(()=>true);
-const chipsCap = document.getElementById("chipsCap");
-companies.forEach((c,i)=>{
-  const el = document.createElement("div");
-  el.className = "chip on"; el.textContent = c;
-  el.onclick = ()=>{ capSel[i]=!capSel[i]; el.classList.toggle("on"); drawCap(); };
-  chipsCap.appendChild(el);
-});
-let capChart;
-function drawCap(){
-  const idx = companies.map((_,i)=>i).filter(i=>capSel[i]);
-  const data = {
-    labels: idx.map(i=>companies[i]),
-    datasets: [
-      {label:"Installed (MW)", data: idx.map(i=>commercial["Installed IT capacity (MW)"][i]), backgroundColor:"#57C7B8"},
-      {label:"Pipeline (MW)", data: idx.map(i=>commercial["Pipeline capacity (MW)"][i]), backgroundColor:"#E8A33D"}
-    ]
-  };
-  if(capChart) capChart.destroy();
-  capChart = new Chart(document.getElementById("chartCap"), {type:"bar", data, options:{responsive:true, plugins:{legend:{labels:{boxWidth:12}}}, scales:{y:{title:{display:true,text:"MW"}}}}});
+const TURQ="#62E0ED", VIOLET="#828EFF", SILVER="#A9B7C7", GREY="#71739E", LIGHTV="#7380E7", NEG="#CC0000";
+function fmtMoney(v){ if(v===null||v===undefined||isNaN(v)) return ""; const a=Math.abs(v);
+  return a>=100000 ? "$"+Math.round(v/1000)+"B" : a>=1000 ? "$"+(v/1000).toFixed(1).replace(/\.0$/,"")+"B" : "$"+Math.round(v)+"M"; }
+function fmtShort(v){
+  if(v===null||v===undefined||isNaN(v)) return "";
+  const a = Math.abs(v);
+  if(a>=1000) return (v/1000).toFixed(1).replace(/\.0$/,"")+"k";
+  if(a>=10) return Math.round(v).toString();
+  return (Math.round(v*100)/100).toString();
 }
-drawCap();
-
-// revenue/margin combo
-let revChart;
-function drawRev(){
-  const includeMeta = document.getElementById("toggleMeta").checked;
-  const idx = companies.map((_,i)=>i).filter(i=> includeMeta || i!==9);
-  const data = {
-    labels: idx.map(i=>companies[i]),
-    datasets: [
-      {type:"bar", label:"Revenue ($M)", data: idx.map(i=>financial["Revenue ($M)"][i]), backgroundColor:"#4E9DE6", yAxisID:"y"},
-      {type:"line", label:"EBITDA margin", data: idx.map(i=>parseFloat(financial["EBITDA Margin"][i])), borderColor:"#E8A33D", backgroundColor:"#E8A33D", yAxisID:"y1", tension:.3}
-    ]
-  };
-  if(revChart) revChart.destroy();
-  revChart = new Chart(document.getElementById("chartRev"), {data, options:{responsive:true,
-    scales:{
-      y:{type:"logarithmic", title:{display:true,text:"Revenue $M (log)"}},
-      y1:{position:"right", grid:{drawOnChartArea:false}, title:{display:true,text:"EBITDA margin %"}}
-    }}});
+// parse "12.3%", "3.2x", "13,500" -> number, or null if N/A / — / text
+function num(v){
+  if(typeof v==="number") return v;
+  const s = String(v).replace(/,/g,"").replace(/[%x$]/g,"").trim();
+  if(!/^-?\d+(\.\d+)?$/.test(s)) return null;
+  return parseFloat(s);
 }
-document.getElementById("toggleMeta").addEventListener("change", drawRev);
-drawRev();
 
-// leverage chart
-const levRaw = financial["Net Debt/EBITDA"];
-const levVals = levRaw.map(v=>{ const n = parseFloat(v); return isNaN(n)?0:n; });
-const levFlag = levRaw.map(v=> (v==="N/A"||v==="—") ? true:false);
-new Chart(document.getElementById("chartLev"), {type:"bar", data:{
-  labels: companies,
-  datasets:[{label:"Net Debt / EBITDA (x)", data:levVals, backgroundColor: levVals.map((v,i)=> levFlag[i] ? "#3A4A5A" : (v<0 ? "#E2685A" : "#57C7B8"))}]
-}, options:{responsive:true, plugins:{legend:{display:false}, tooltip:{callbacks:{label:(c)=> levFlag[c.dataIndex] ? "N/A / not meaningful" : c.parsed.y+"x"}}}}});
-
-// FTE stacked
-const fteKeys = ["Sales & BD %","IT %","Operations %","Others %","Engineering %"];
-const fteColors = ["#57C7B8","#4E9DE6","#E8A33D","#9B8CF2","#E2685A"];
-new Chart(document.getElementById("chartFTE"), {type:"bar", data:{
-  labels: companies,
-  datasets: fteKeys.map((k,i)=>({label:k.replace(" %",""), data: fte[k], backgroundColor: fteColors[i]}))
-}, options:{responsive:true, indexAxis:"y", scales:{x:{stacked:true, max:100, title:{display:true,text:"% of headcount"}}, y:{stacked:true}}, plugins:{legend:{position:"bottom", labels:{boxWidth:12}}}}});
-
-// table
-const tabsEl = document.getElementById("tabs");
-let activeGroup = "Commercial";
-Object.keys(groups).forEach(g=>{
-  const t = document.createElement("div");
-  t.className = "tab" + (g===activeGroup?" on":"");
-  t.textContent = g;
-  t.onclick = ()=>{ activeGroup=g; [...tabsEl.children].forEach(c=>c.classList.remove("on")); t.classList.add("on"); renderTable(); };
-  tabsEl.appendChild(t);
-});
-function fmt(v){
-  if(typeof v === "number"){
-    return v.toLocaleString(undefined,{maximumFractionDigits:2});
+let sel = companies.map(()=>true);
+const idxSel = ()=> companies.map((_,i)=>i).filter(i=>sel[i]);
+const charts = {};
+function make(id, cfg){
+  // reserve room next to the company axis for the logo badges
+  const ax = cfg.options.indexAxis==="y" ? "y" : "x";
+  const sc = cfg.options.scales[ax] || {};
+  const extra = ax==="x"
+    // keep company names horizontal and centred under each bar cluster; two-word names wrap
+    ? {padding:30, maxRotation:0, minRotation:0, autoSkip:false, callback:function(v){ const l = this.getLabelForValue(v); return (l.length>9 && l.includes(" ")) ? l.split(" ") : l; }}
+    : {padding:30};
+  cfg.options.scales[ax] = Object.assign({}, sc, {ticks: Object.assign({}, sc.ticks, extra)});
+  if(charts[id]) charts[id].destroy(); charts[id] = new Chart(document.getElementById(id), cfg);
+}
+// draws each company's badge beside its axis label
+const logoPlugin = {
+  id:"logoTicks",
+  afterDraw(chart){
+    const ax = chart.options.indexAxis==="y" ? "y" : "x";
+    const scale = chart.scales[ax]; if(!scale) return;
+    const ctx = chart.ctx, r = 12;
+    chart.data.labels.forEach((lab,k)=>{
+      const ci = companies.indexOf(lab); if(ci<0) return;
+      const p = scale.getPixelForTick(k);
+      const cx = ax==="x" ? p : scale.right - r - 4;
+      const cy = ax==="x" ? scale.top + r + 4 : p;
+      const img = logoImg[lab];
+      ctx.save();
+      ctx.beginPath(); ctx.roundRect(cx-r, cy-r, 2*r, 2*r, 4); ctx.fillStyle = "#FFFFFF"; ctx.fill();
+      if(img && img.complete) ctx.drawImage(img, cx-r+1.5, cy-r+1.5, 2*r-3, 2*r-3);
+      ctx.restore();
+    });
   }
-  return v;
+};
+const gridY = {grid:{color:"#1A2B63"}};
+const noGridX = {grid:{display:false}};
+const legendW = {labels:{boxWidth:12,color:"#FFFFFF"}};
+
+// generic single-series bar with N/A handling + sign colouring
+function singleBar(id, arr, unit, opts={}){
+  const idx = idxSel();
+  const vals = idx.map(i=>num(arr[i]));
+  const cap = opts.breakOutliers ? outlierCap(vals) : null;
+  make(id, {type:"bar", data:{labels: idx.map(i=>companies[i]), datasets:[{ realData: vals,
+    data: vals.map(v=> v===null?0:((cap && v>cap)?cap:v)),
+    backgroundColor: vals.map(v=> v===null?GREY:(v<0?(opts.negColor||VIOLET):(opts.color||TURQ)))
+  }]}, options:{plugins:{legend:{display:false},
+    axisBreak:{cap},
+    tooltip:{callbacks:{label:c=> vals[c.dataIndex]===null ? "N/A" : (opts.fmt?opts.fmt(vals[c.dataIndex]):vals[c.dataIndex]+unit)}},
+    datalabels:{display:true, anchor:"end", align:c=> (c.dataset.data[c.dataIndex]<0?"bottom":"top"), color:"#FFFFFF", font:{size:12},
+      formatter:(v,c)=> { const r = vals[c.dataIndex]; return r===null ? "N/A" : (opts.fmt?opts.fmt(r):fmtShort(r)+unit); }}},
+    layout:{padding:{top:28}},
+    scales:{y:Object.assign({title:{display:true,text:opts.yTitle||"",color:"#999AB8"}, ticks: opts.money?{callback:v=>v===0?"$0":fmtMoney(v)}:{}}, gridY), x:noGridX}}});
 }
-function renderTable(){
-  const data = groups[activeGroup];
-  let html = "<thead><tr><th>Metric</th>" + companies.map((c,i)=>`<th>${c}<br><span style="color:var(--muted);font-weight:400">${years[i]}</span></th>`).join("") + "</tr></thead><tbody>";
+// broken-axis: if the top value dwarfs the rest, cap it and draw a "//" break on the bar
+function outlierCap(values){
+  const v = values.filter(x=>x!==null && x>0).sort((a,b)=>b-a);
+  if(v.length<3) return null;
+  for(let i=0;i<Math.min(3,v.length-2);i++){ if(v[i] > 1.8*v[i+1]) return v[i+1]*1.06; }
+  return null;
+}
+const breakPlugin = {
+  id:"axisBreak",
+  afterDatasetsDraw(chart, args, pOpts){
+    const cap = pOpts && pOpts.cap; if(!cap) return;
+    const ctx = chart.ctx;
+    chart.data.datasets.forEach((ds,di)=>{
+      const meta = chart.getDatasetMeta(di); if(meta.hidden) return;
+      meta.data.forEach((bar,j)=>{
+        const real = ds.realData ? ds.realData[j] : null;
+        if(real===null || real<=cap) return;
+        const w = bar.width + 4, x0 = bar.x - w/2, y = bar.y + 26, s = 5, gap = 5;
+        ctx.save();
+        // background gap band
+        ctx.fillStyle = "#0E2260";
+        ctx.beginPath();
+        ctx.moveTo(x0, y+s); ctx.lineTo(x0+w, y-s); ctx.lineTo(x0+w, y-s+gap); ctx.lineTo(x0, y+s+gap); ctx.closePath(); ctx.fill();
+        // two slanted lines
+        ctx.strokeStyle = "#FFFFFF"; ctx.lineWidth = 1.5;
+        [0,gap].forEach(o=>{ ctx.beginPath(); ctx.moveTo(x0, y+s+o); ctx.lineTo(x0+w, y-s+o); ctx.stroke(); });
+        ctx.restore();
+      });
+    });
+  }
+};
+Chart.register(breakPlugin, logoPlugin);
+Object.entries(LOGOS).forEach(([n,src])=>{ const im = new Image(); im.onload = ()=> Object.values(charts).forEach(c=>c.draw()); im.src = src; logoImg[n] = im; });
+
+// grouped bars
+function multiBar(id, series, opts={}){
+  const idx = idxSel();
+  const raw = series.map(s=> idx.map(i=>num(s.arr[i])));
+  const cap = opts.breakOutliers ? outlierCap(raw.flat()) : null;
+  make(id, {type:"bar", data:{labels: idx.map(i=>companies[i]), datasets: series.map((s,si)=>({
+    label:s.label, backgroundColor:s.color, realData: raw[si],
+    data: raw[si].map(v=> (cap && v!==null && v>cap) ? cap : v)
+  }))}, options:{plugins:{legend:legendW, axisBreak:{cap},
+    tooltip:{callbacks:{label:c=> { const r=c.dataset.realData[c.dataIndex]; return c.dataset.label+": "+(r===null?"N/A":(opts.money?fmtMoney(r):fmtShort(r)+(opts.unit||""))); }}},
+    datalabels:{display:opts.labels!==false, anchor:"end", align:c=>((c.dataset.data[c.dataIndex]||0)<0?"bottom":"top"), color:"#FFFFFF", font:{size:12}, formatter:(v,c)=>{ const r=c.dataset.realData[c.dataIndex]; return r===null?"":(opts.money?fmtMoney(r):fmtShort(r)+(opts.unit||"")); }}},
+    layout:{padding:{top:28}},
+    scales:{y:Object.assign({title:{display:true,text:opts.yTitle||"",color:"#999AB8"}, ticks: opts.money?{callback:v=>v===0?"$0":fmtMoney(v)}:{}}, gridY), x:noGridX}}});
+}
+
+// ---------- COMMERCIAL ----------
+function drawCommercial(){
+  multiBar("cCap", [
+    {label:"Installed (MW)", arr: commercial["Installed IT capacity (MW)"], color:TURQ},
+    {label:"Pipeline (MW)", arr: commercial["Pipeline capacity (MW)"], color:VIOLET}
+  ], {yTitle:"MW", breakOutliers:true});
+  singleBar("cRoic", commercial["ROIC"], "%", {yTitle:"ROIC %", negColor:NEG});
+  singleBar("cEv", commercial["EV/EBITDA"], "x", {yTitle:"x EBITDA", negColor:NEG});
+  multiBar("cCapex", [
+    {label:"Last 3Y capex", arr: commercial["Last 3Y Capex ($M)"], color:SILVER},
+    {label:"Next 3Y capex (guided)", arr: commercial["Next 3Y Capex ($M)"], color:VIOLET}
+  ], {yTitle:"Capex", money:true, breakOutliers:true});
+}
+
+function drawRevMargin(id){
+  // Bars live in the bottom ~55% of the plot, the margin line in the top band, so they never collide.
+  // Revenue is linear; an outlier (Meta) is cut with a // axis break.
+  const idx = idxSel();
+  const rev = idx.map(i=>financial["Revenue ($M)"][i]||null);
+  const cap = outlierCap(rev);
+  const top = cap || Math.max(...rev.filter(v=>v!==null), 1);
+  // both axes share 8 equal intervals so their ticks sit on the same gridlines;
+  // bars fill the lower half (left), the margin line the upper half (right, -300%..100%)
+  const lStep = (()=>{ const raw = top/4, p = Math.pow(10, Math.floor(Math.log10(raw)));
+    return [1,2,2.5,5,10].map(m=>m*p).find(x=>x>=raw); })();
+  const revLbl = v=> !v?"":(v>=1000?"$"+(v/1000).toFixed(1).replace(/\.0$/,"")+"B":"$"+fmtShort(v)+"M");
+  make(id, {data:{labels: idx.map(i=>companies[i]), datasets:[
+    {type:"line", label:"EBITDA margin", order:0, data: idx.map(i=>num(financial["EBITDA Margin"][i])), borderColor:TURQ, backgroundColor:TURQ, yAxisID:"y1", tension:0, pointRadius:4,
+      datalabels:{display:true, align:"top", offset:6, color:"#091C54", backgroundColor:TURQ, borderRadius:3, padding:{top:2,bottom:2,left:4,right:4}, font:{size:12,weight:"600"}, formatter:v=>v+"%"}},
+    {type:"bar", label:"Revenue ($M)", order:1, realData: rev, data: rev.map(v=> (cap && v!==null && v>cap) ? cap : v), backgroundColor:VIOLET, yAxisID:"y",
+      datalabels:{display:true, anchor:"end", align:"top", color:"#FFFFFF", font:{size:12}, formatter:(v,c)=> revLbl(rev[c.dataIndex])}}
+  ]}, options:{plugins:{legend:legendW, axisBreak:{cap},
+      tooltip:{callbacks:{label:c=> c.dataset.yAxisID==="y" ? "Revenue: "+revLbl(rev[c.dataIndex]) : "EBITDA margin: "+c.parsed.y+"%"}}},
+    layout:{padding:{top:24}},
+    scales:{
+      y:{min:0, max: lStep*8, grid:{color:"#1A2B63"}, title:{display:true,text:"Revenue",color:"#999AB8"},
+        ticks:{stepSize:lStep, callback:v=> v===0 ? "$0" : v>=1000 ? "$"+(v/1000)+"B" : "$"+v+"M"}},
+      y1:{position:"right", min:-300, max:100, grid:{drawOnChartArea:false},
+        ticks:{stepSize:50, callback:v=>v+"%"}, title:{display:true,text:"EBITDA margin %",color:"#999AB8"}},
+      x:noGridX}}});
+}
+// unit-economics chart with its own local metric pills
+const MW_METRICS = ["EBITDA/MW","PAT/MW","FCF/MW","Capex/MW","Net debt/MW"];
+let mwMetric = "EBITDA/MW";
+function drawMw(){
+  singleBar("fMw", financial[mwMetric], "", {yTitle:"$M per MW", negColor:NEG, breakOutliers:true,
+    fmt:v=>(v<0?"-":"")+"$"+(Math.round(Math.abs(v)*100)/100)+"M"});
+}
+(()=>{ const host = document.getElementById("mwPills");
+  MW_METRICS.forEach(m=>{ const b = document.createElement("div"); b.className = "pill"+(m===mwMetric?" on":""); b.textContent = m;
+    b.onclick = ()=>{ mwMetric = m; [...host.children].forEach(x=>x.classList.toggle("on", x===b)); drawMw(); };
+    host.appendChild(b); }); })();
+// ---------- FINANCIAL ----------
+function drawFinancial(){
+  const idx = idxSel();
+  drawRevMargin("fRev");
+  multiBar("fMargin", [
+    {label:"EBITDA margin %", arr: financial["EBITDA Margin"], color:TURQ},
+    {label:"PAT margin %", arr: financial["PAT Margin"], color:VIOLET}
+  ], {yTitle:"%", unit:"%"});
+  singleBar("fLev", financial["Net Debt/EBITDA"], "x", {yTitle:"x EBITDA"});
+  singleBar("fDE", financial["Net Debt/Equity"], "x", {yTitle:"x equity", color:LIGHTV});
+  multiBar("fCagr", [
+    {label:"Revenue CAGR", arr: financial["3Y Revenue CAGR"], color:TURQ},
+    {label:"EBITDA CAGR", arr: financial["3Y EBITDA CAGR"], color:VIOLET},
+    {label:"PAT CAGR", arr: financial["3Y PAT CAGR"], color:SILVER}
+  ], {yTitle:"3Y CAGR %", labels:false});
+  drawMw();
+  singleBar("fRoe", financial["RoE (%)"], "%", {yTitle:"RoE %", negColor:NEG});
+  singleBar("fNd", financial["Net Debt ($M)"], "", {yTitle:"Net debt", money:true, breakOutliers:true, color:VIOLET, fmt:fmtMoney});
+}
+
+// ---------- FTE ----------
+const fteKeys = ["Sales & BD %","IT %","Operations %","Others %","Engineering %"];
+const fteColors = [VIOLET,TURQ,SILVER,"#58C9D5",LIGHTV];
+function drawFTE(){
+  singleBar("hEmp", fte["Total employees"], "", {yTitle:"Employees", breakOutliers:true, color:VIOLET, fmt:v=>Math.round(v).toLocaleString()});
+  singleBar("hMw", fte["MW/FTE"], "", {yTitle:"MW per FTE"});
+  multiBar("hProd", [
+    {label:"Revenue $M / FTE", arr: fte["Revenue ($M)/FTE"], color:TURQ},
+    {label:"EBITDA $M / FTE", arr: fte["EBITDA ($M)/FTE"], color:VIOLET}
+  ], {yTitle:"$M per FTE"});
+  const idx = idxSel();
+  make("hMix", {type:"bar", data:{labels: idx.map(i=>companies[i]),
+    datasets: fteKeys.map((k,ki)=>({label:k.replace(" %",""), data: idx.map(i=>fte[k][i]), backgroundColor: fteColors[ki],
+      datalabels:{display:c=> c.dataset.data[c.dataIndex] >= 7, color:"#091C54", font:{size:12,weight:"600"}, formatter:v=>v+"%"}}))
+  }, options:{indexAxis:"y",
+    scales:{x:Object.assign({stacked:true, max:100, title:{display:true,text:"% of headcount",color:"#999AB8"}},gridY), y:{stacked:true, grid:{display:false}}},
+    plugins:{legend:{position:"bottom", labels:{boxWidth:12,color:"#FFFFFF"}}}}});
+}
+
+// ---------- TABLES (one per view, with category sub-tabs) ----------
+function fmt(v){ return typeof v==="number" ? v.toLocaleString(undefined,{maximumFractionDigits:2}) : v; }
+const tableState = [];
+document.querySelectorAll(".view").forEach(view=>{
+  const host = view.querySelector(".tblhost");
+  const st = {group: view.dataset.view, host};
+  host.innerHTML = `<div class="tabs"></div><div class="tblwrap"><table></table></div>`;
+  const tabsEl = host.querySelector(".tabs");
+  Object.keys(groups).forEach(g=>{
+    const t = document.createElement("div");
+    t.className = "tab" + (g===st.group?" on":"");
+    t.textContent = g;
+    t.onclick = ()=>{ st.group=g; [...tabsEl.children].forEach(c=>c.classList.remove("on")); t.classList.add("on"); renderTable(st); };
+    tabsEl.appendChild(t);
+  });
+  tableState.push(st);
+});
+function renderTable(st){
+  const tbl = st.host.querySelector("table");
+  const data = groups[st.group];
+  const idx = idxSel();
+  if(idx.length===0){ tbl.innerHTML = `<tbody><tr><td style="padding:20px;color:var(--muted);">No operators selected.</td></tr></tbody>`; return; }
+  let html = "<thead><tr><th>Metric</th>" + idx.map(i=>`<th><span class="co">${logo(i)}${companies[i]}</span><br><span style="color:var(--muted);font-weight:400">${years[i]}</span></th>`).join("") + "</tr></thead><tbody>";
   Object.entries(data).forEach(([metric, vals])=>{
-    html += `<tr><td>${metric}</td>` + vals.map(v=>{
-      const neg = (typeof v === "number" && v<0) || (typeof v==="string" && v.trim().startsWith("-"));
+    html += `<tr><td>${metric}</td>` + idx.map(i=>{
+      const v = vals[i];
+      const neg = (typeof v==="number" && v<0) || (typeof v==="string" && v.trim().startsWith("-"));
       return `<td class="${neg?'neg':''}">${fmt(v)}</td>`;
     }).join("") + "</tr>";
   });
-  html += "</tbody>";
-  document.getElementById("dataTable").innerHTML = html;
+  tbl.innerHTML = html + "</tbody>";
 }
-renderTable();
+
+// ---------- NAV + FILTER ----------
+let activeView = "Commercial";
+const drawers = {"Commercial":drawCommercial, "Financial":drawFinancial, "FTE / Headcount":drawFTE};
+function drawActive(){ drawers[activeView](); tableState.forEach(renderTable); }
+document.querySelectorAll(".ribbon-item").forEach(r=>{
+  r.addEventListener("click", ()=>{
+    activeView = r.dataset.view;
+    document.querySelectorAll(".ribbon-item").forEach(x=>x.classList.toggle("on", x===r));
+    document.querySelectorAll(".view").forEach(v=>v.classList.toggle("on", v.dataset.view===activeView));
+    drawActive();
+  });
+});
+
+const msBtn = document.getElementById("msBtn"), msWrap = document.getElementById("msWrap"), msList = document.getElementById("msList");
+companies.forEach((c,i)=>{
+  const row = document.createElement("label");
+  row.className = "ms-item";
+  row.innerHTML = `<input type="checkbox" checked>${logo(i)}<span class="nm">${c}</span><span class="yr">${years[i]}</span>`;
+  row.querySelector("input").addEventListener("change", e=>{ sel[i]=e.target.checked; applyFilters(); });
+  msList.appendChild(row);
+});
+function updateMsBtn(){
+  const n = sel.filter(Boolean).length;
+  msBtn.firstChild.textContent = n===companies.length ? "All 10 selected " : n===0 ? "None selected " : n+" of 10 selected ";
+}
+msBtn.addEventListener("click", ()=> msWrap.classList.toggle("open"));
+document.addEventListener("click", e=>{ if(!msWrap.contains(e.target)) msWrap.classList.remove("open"); });
+document.getElementById("msAll").addEventListener("click", ()=>{ sel = companies.map(()=>true); msList.querySelectorAll("input").forEach(i=>i.checked=true); applyFilters(); });
+document.getElementById("msNone").addEventListener("click", ()=>{ sel = companies.map(()=>false); msList.querySelectorAll("input").forEach(i=>i.checked=false); applyFilters(); });
+function applyFilters(){ updateMsBtn(); drawActive(); }
+applyFilters();
+}
 </script>
 </body>
 </html>
