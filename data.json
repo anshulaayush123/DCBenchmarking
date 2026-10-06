@@ -2,7 +2,7 @@
   "_readme": "Single source of truth for the dashboard. Values are per company, keyed by company name. Money in USD millions unless the metric name says otherwise. Percentages and multiples are stored as display strings (e.g. '48.7%', '3.2x'); use 'N/A' or '—' when not available. See AGENT_INSTRUCTIONS.md before editing.",
   "companies": [
     {
-      "name": "Equinix",
+      "name": "Anshul",
       "period": "FY2024",
       "color": "#828EFF",
       "logo": "logos/equinix.png"
@@ -65,7 +65,7 @@
   "metrics": {
     "Commercial": {
       "Installed IT capacity (MW)": {
-        "Equinix": 1900,
+        "Anshul": 1900,
         "Digital Realty": 3100,
         "CoreWeave": 1500,
         "Fermi": 0,
@@ -77,7 +77,7 @@
         "Meta": 3000
       },
       "Pipeline capacity (MW)": {
-        "Equinix": 3000,
+        "Anshul": 3000,
         "Digital Realty": 1402,
         "CoreWeave": 4200,
         "Fermi": 17000,
@@ -89,7 +89,7 @@
         "Meta": 8800
       },
       "Live vs pipeline %": {
-        "Equinix": "63.3%",
+        "Anshul": "63.3%",
         "Digital Realty": "221.1%",
         "CoreWeave": "35.7%",
         "Fermi": "0.0%",
@@ -101,7 +101,7 @@
         "Meta": "34.1%"
       },
       "Customer concentration": {
-        "Equinix": "Largest ~3%",
+        "Anshul": "Largest ~3%",
         "Digital Realty": "Largest 11.5%",
         "CoreWeave": "Microsoft 67%",
         "Fermi": "TensorWave 100% of 222MW",
@@ -113,7 +113,7 @@
         "Meta": "Fragmented"
       },
       "EV/EBITDA": {
-        "Equinix": "31.5x",
+        "Anshul": "31.5x",
         "Digital Realty": "35.5x",
         "CoreWeave": "27.7x",
         "Fermi": "N/A",
@@ -125,7 +125,7 @@
         "Meta": "15.5x"
       },
       "ROIC": {
-        "Equinix": "4.8%",
+        "Anshul": "4.8%",
         "Digital Realty": "1.6%",
         "CoreWeave": "3.9%",
         "Fermi": "N/A",
@@ -137,7 +137,7 @@
         "Meta": "22.0%"
       },
       "Last 3Y Capex ($M)": {
-        "Equinix": 9731,
+        "Anshul": 9731,
         "Digital Realty": 10060,
         "CoreWeave": 21954,
         "Fermi": 1195,
@@ -149,7 +149,7 @@
         "Meta": 139540
       },
       "Next 3Y Capex ($M)": {
-        "Equinix": "13,500",
+        "Anshul": "13,500",
         "Digital Realty": "—",
         "CoreWeave": "131,743",
         "Fermi": ">3,000",
@@ -163,7 +163,7 @@
     },
     "Financial": {
       "Revenue ($M)": {
-        "Equinix": 9300,
+        "Anshul": 9300,
         "Digital Realty": 5913,
         "CoreWeave": 5131,
         "Fermi": 0,
@@ -175,7 +175,7 @@
         "Meta": 200966
       },
       "3Y Revenue CAGR": {
-        "Equinix": "6.0%",
+        "Anshul": "6.0%",
         "Digital Realty": "8.0%",
         "CoreWeave": "182.0%",
         "Fermi": "N/A",
@@ -187,7 +187,7 @@
         "Meta": "19.9%"
       },
       "EBITDA ($M)": {
-        "Equinix": 4531,
+        "Anshul": 4531,
         "Digital Realty": 2290,
         "CoreWeave": 2408,
         "Fermi": -193,
@@ -199,7 +199,7 @@
         "Meta": 101892
       },
       "EBITDA Margin": {
-        "Equinix": "48.7%",
+        "Anshul": "48.7%",
         "Digital Realty": "41.0%",
         "CoreWeave": "46.9%",
         "Fermi": "0.0%",
@@ -211,7 +211,7 @@
         "Meta": "50.7%"
       },
       "3Y EBITDA CAGR": {
-        "Equinix": "7.0%",
+        "Anshul": "7.0%",
         "Digital Realty": "-2.5%",
         "CoreWeave": "200.2%",
         "Fermi": "N/A",
@@ -223,7 +223,7 @@
         "Meta": "39.3%"
       },
       "PAT ($M)": {
-        "Equinix": 810,
+        "Anshul": 810,
         "Digital Realty": 588,
         "CoreWeave": -1167,
         "Fermi": -215,
@@ -235,7 +235,7 @@
         "Meta": 60458
       },
       "PAT Margin": {
-        "Equinix": "8.7%",
+        "Anshul": "8.7%",
         "Digital Realty": "10.5%",
         "CoreWeave": "-22.7%",
         "Fermi": "0.0%",
@@ -247,7 +247,7 @@
         "Meta": "30.1%"
       },
       "3Y PAT CAGR": {
-        "Equinix": "17.5%",
+        "Anshul": "17.5%",
         "Digital Realty": "20.0%",
         "CoreWeave": "-26.1%",
         "Fermi": "N/A",
@@ -259,7 +259,7 @@
         "Meta": "37.6%"
       },
       "RoE (%)": {
-        "Equinix": "18.0%",
+        "Anshul": "18.0%",
         "Digital Realty": "2.7%",
         "CoreWeave": "N/A",
         "Fermi": "-20.7%",
@@ -271,7 +271,7 @@
         "Meta": "30.2%"
       },
       "Net Debt ($M)": {
-        "Equinix": 14400,
+        "Anshul": 14400,
         "Digital Realty": 12830,
         "CoreWeave": 26661,
         "Fermi": 445,
@@ -283,7 +283,7 @@
         "Meta": 2305
       },
       "Net Debt/EBITDA": {
-        "Equinix": "3.2x",
+        "Anshul": "3.2x",
         "Digital Realty": "5.6x",
         "CoreWeave": "11.1x",
         "Fermi": "N/A",
@@ -295,7 +295,7 @@
         "Meta": "0.0x"
       },
       "Net Debt/Equity": {
-        "Equinix": "1.0x",
+        "Anshul": "1.0x",
         "Digital Realty": "0.6x",
         "CoreWeave": "8.0x",
         "Fermi": "0.4x",
@@ -307,7 +307,7 @@
         "Meta": "0.0x"
       },
       "G&A costs ($M)": {
-        "Equinix": 1766,
+        "Anshul": 1766,
         "Digital Realty": 480,
         "CoreWeave": 651,
         "Fermi": 193,
@@ -319,7 +319,7 @@
         "Meta": 12152
       },
       "G&A % of Revenue": {
-        "Equinix": "19.0%",
+        "Anshul": "19.0%",
         "Digital Realty": "8.0%",
         "CoreWeave": "12.7%",
         "Fermi": "N/A",
@@ -331,7 +331,7 @@
         "Meta": "6.1%"
       },
       "PAT/MW": {
-        "Equinix": 0.43,
+        "Anshul": 0.43,
         "Digital Realty": 0.22,
         "CoreWeave": -1.33,
         "Fermi": -0.97,
@@ -343,7 +343,7 @@
         "Meta": 20.15
       },
       "Net debt/MW": {
-        "Equinix": 7.58,
+        "Anshul": 7.58,
         "Digital Realty": 4.75,
         "CoreWeave": 29.62,
         "Fermi": 2.01,
@@ -355,7 +355,7 @@
         "Meta": 0.77
       },
       "EBITDA/MW": {
-        "Equinix": 2.38,
+        "Anshul": 2.38,
         "Digital Realty": 0.74,
         "CoreWeave": 2.68,
         "Fermi": -0.87,
@@ -367,7 +367,7 @@
         "Meta": 33.96
       },
       "FCF/MW": {
-        "Equinix": 0.3,
+        "Anshul": 0.3,
         "Digital Realty": 0.63,
         "CoreWeave": -8.06,
         "Fermi": -3.07,
@@ -379,7 +379,7 @@
         "Meta": 15.37
       },
       "Capex/MW": {
-        "Equinix": 4.5,
+        "Anshul": 4.5,
         "Digital Realty": 14.27,
         "CoreWeave": 11.45,
         "Fermi": 2.82,
@@ -393,7 +393,7 @@
     },
     "FTE / Headcount": {
       "MW/FTE": {
-        "Equinix": 0.14,
+        "Anshul": 0.14,
         "Digital Realty": 0.72,
         "CoreWeave": 0.39,
         "Fermi": 3.17,
@@ -405,7 +405,7 @@
         "Meta": 0.04
       },
       "Revenue ($M)/FTE": {
-        "Equinix": 0.67,
+        "Anshul": 0.67,
         "Digital Realty": 1.38,
         "CoreWeave": 2.34,
         "Fermi": 0,
@@ -417,7 +417,7 @@
         "Meta": 2.55
       },
       "EBITDA ($M)/FTE": {
-        "Equinix": 0.33,
+        "Anshul": 0.33,
         "Digital Realty": 0.53,
         "CoreWeave": 1.1,
         "Fermi": -2.76,
@@ -429,7 +429,7 @@
         "Meta": 1.29
       },
       "Total employees": {
-        "Equinix": 13931,
+        "Anshul": 13931,
         "Digital Realty": 4282,
         "CoreWeave": 2189,
         "Fermi": 70,
@@ -441,7 +441,7 @@
         "Meta": 78865
       },
       "Sales & BD %": {
-        "Equinix": 20,
+        "Anshul": 20,
         "Digital Realty": 18,
         "CoreWeave": 9,
         "Fermi": 18,
@@ -453,7 +453,7 @@
         "Meta": 10
       },
       "IT %": {
-        "Equinix": 16,
+        "Anshul": 16,
         "Digital Realty": 14,
         "CoreWeave": 26,
         "Fermi": 5,
@@ -465,7 +465,7 @@
         "Meta": 9
       },
       "Operations %": {
-        "Equinix": 20,
+        "Anshul": 20,
         "Digital Realty": 8,
         "CoreWeave": 13,
         "Fermi": 28,
@@ -477,7 +477,7 @@
         "Meta": 9
       },
       "Others %": {
-        "Equinix": 10,
+        "Anshul": 10,
         "Digital Realty": 19,
         "CoreWeave": 11,
         "Fermi": 10,
@@ -489,7 +489,7 @@
         "Meta": 12
       },
       "Engineering %": {
-        "Equinix": 24,
+        "Anshul": 24,
         "Digital Realty": 32,
         "CoreWeave": 28,
         "Fermi": 9,
@@ -503,7 +503,7 @@
     }
   },
   "sources": {
-    "Equinix": {},
+    "Anshul": {},
     "Digital Realty": {},
     "CoreWeave": {},
     "Fermi": {},
