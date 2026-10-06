@@ -47,17 +47,17 @@ Every other Sunday. Each run is independent: read this file and `data.json` fres
 
 ## Data rules
 
-- **Units:** money in USD millions. Convert non-USD reporters (e.g. NextDC, AUD) at the
-  period-average rate, and note the rate used in the pull request.
-- **Period:** use the latest reported full fiscal year or half-year, matching how the
-  company is currently shown. If switching basis (e.g. FY → LTM), flag it as Low
-  confidence.
-- **EBITDA:** use the company's reported *adjusted* EBITDA if that is what was used
-  before. Keep the same definition per company over time.
+- **Units:** money in USD millions.
+- **Period:** use the more recent of the latest full fiscal year or the last twelve
+  months (LTM). Label the period clearly in `companies[].period`, e.g. `"FY2025"` or
+  `"LTM Jun 2026"`.
+- **EBITDA:** use the company's reported *adjusted* EBITDA, with the same definition per
+  company over time.
+- **EV/EBITDA:** refresh only when new results come out.
+- **Currency:** convert non-USD figures (e.g. NextDC, AUD) to USD at the exchange rate on
+  the day of the update. State the rate, date and source in the pull request.
 - **Format:** store percentages and multiples as display strings (`"48.7%"`, `"3.2x"`).
   Use `"N/A"` when not disclosed or not meaningful, and `"—"` when not available.
-- **EV/EBITDA:** market-based. Refresh it only when the company's EBITDA changes, using
-  the enterprise value at the report date.
 
 ## Derived metrics (recalculate; do not search for these)
 
