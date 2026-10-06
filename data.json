@@ -3,19 +3,19 @@
   "companies": [
     {
       "name": "Equinix",
-      "period": "FY2024",
+      "period": "LTM Jun 2026",
       "color": "#828EFF",
       "logo": "logos/equinix.png"
     },
     {
       "name": "Digital Realty",
-      "period": "FY2024",
+      "period": "LTM Jun 2026",
       "color": "#62E0ED",
       "logo": "logos/digital-realty.png"
     },
     {
       "name": "CoreWeave",
-      "period": "FY2025",
+      "period": "LTM Jun 2026",
       "color": "#A9B7C7",
       "logo": "logos/coreweave.png"
     },
@@ -27,7 +27,7 @@
     },
     {
       "name": "NextDC",
-      "period": "FY2024",
+      "period": "FY2026",
       "color": "#58C9D5",
       "logo": "logos/nextdc.png"
     },
@@ -45,19 +45,19 @@
     },
     {
       "name": "Hut 8",
-      "period": "FY2025",
+      "period": "LTM Jun 2026",
       "color": "#6971CB",
       "logo": "logos/hut-8.png"
     },
     {
       "name": "Nebius",
-      "period": "FY2025",
+      "period": "LTM Jun 2026",
       "color": "#4DB3BE",
       "logo": "logos/nebius.png"
     },
     {
       "name": "Meta",
-      "period": "FY2025",
+      "period": "LTM Jun 2026",
       "color": "#5C63B3",
       "logo": "logos/meta.png"
     }
@@ -66,13 +66,13 @@
     "Commercial": {
       "Installed IT capacity (MW)": {
         "Equinix": 1900,
-        "Digital Realty": 3100,
+        "Digital Realty": 3102,
         "CoreWeave": 1500,
         "Fermi": 0,
-        "NextDC": 208,
+        "NextDC": 288,
         "Applied Digital": 386,
         "IREN": 810,
-        "Hut 8": 1020,
+        "Hut 8": 710,
         "Nebius": 170,
         "Meta": 3000
       },
@@ -84,19 +84,19 @@
         "NextDC": 131.5,
         "Applied Digital": 1410,
         "IREN": 4190,
-        "Hut 8": 8500,
+        "Hut 8": 8660,
         "Nebius": 2000,
         "Meta": 8800
       },
       "Live vs pipeline %": {
         "Equinix": "63.3%",
-        "Digital Realty": "221.1%",
+        "Digital Realty": "221.3%",
         "CoreWeave": "35.7%",
         "Fermi": "0.0%",
-        "NextDC": "52.0%",
+        "NextDC": "219.0%",
         "Applied Digital": "27.4%",
         "IREN": "19.3%",
-        "Hut 8": "12.0%",
+        "Hut 8": "8.2%",
         "Nebius": "8.5%",
         "Meta": "34.1%"
       },
@@ -125,7 +125,7 @@
         "Meta": "15.5x"
       },
       "ROIC": {
-        "Equinix": "4.8%",
+        "Equinix": "6.3%",
         "Digital Realty": "1.6%",
         "CoreWeave": "3.9%",
         "Fermi": "N/A",
@@ -163,16 +163,16 @@
     },
     "Financial": {
       "Revenue ($M)": {
-        "Equinix": 9300,
-        "Digital Realty": 5913,
-        "CoreWeave": 5131,
+        "Equinix": 9805,
+        "Digital Realty": 6771,
+        "CoreWeave": 7590,
         "Fermi": 0,
-        "NextDC": 284,
+        "NextDC": 346,
         "Applied Digital": 611,
         "IREN": 707,
-        "Hut 8": 235,
-        "Nebius": 530,
-        "Meta": 200966
+        "Hut 8": 318,
+        "Nebius": 1355,
+        "Meta": 228247
       },
       "3Y Revenue CAGR": {
         "Equinix": "6.0%",
@@ -187,28 +187,28 @@
         "Meta": "19.9%"
       },
       "EBITDA ($M)": {
-        "Equinix": 4531,
-        "Digital Realty": 2290,
-        "CoreWeave": 2408,
+        "Equinix": 4975,
+        "Digital Realty": 3622.5,
+        "CoreWeave": 4400,
         "Fermi": -193,
-        "NextDC": 134,
-        "Applied Digital": -169,
+        "NextDC": 173,
+        "Applied Digital": 107.2,
         "IREN": 246,
         "Hut 8": -217,
-        "Nebius": -65,
-        "Meta": 101892
+        "Nebius": 375.5,
+        "Meta": 109655
       },
       "EBITDA Margin": {
-        "Equinix": "48.7%",
-        "Digital Realty": "41.0%",
-        "CoreWeave": "46.9%",
+        "Equinix": "50.7%",
+        "Digital Realty": "53.5%",
+        "CoreWeave": "58.0%",
         "Fermi": "0.0%",
-        "NextDC": "47.0%",
-        "Applied Digital": "-27.7%",
+        "NextDC": "50.0%",
+        "Applied Digital": "17.5%",
         "IREN": "34.8%",
-        "Hut 8": "-92.5%",
-        "Nebius": "-12.0%",
-        "Meta": "50.7%"
+        "Hut 8": "-68.2%",
+        "Nebius": "27.7%",
+        "Meta": "48.0%"
       },
       "3Y EBITDA CAGR": {
         "Equinix": "7.0%",
@@ -223,28 +223,28 @@
         "Meta": "39.3%"
       },
       "PAT ($M)": {
-        "Equinix": 810,
-        "Digital Realty": 588,
-        "CoreWeave": -1167,
+        "Equinix": 1533,
+        "Digital Realty": 792,
+        "CoreWeave": -1928,
         "Fermi": -215,
-        "NextDC": -31,
+        "NextDC": 57,
         "Applied Digital": -250,
         "IREN": -703,
-        "Hut 8": -226,
-        "Nebius": 29,
-        "Meta": 60458
+        "Hut 8": -600,
+        "Nebius": 61.6,
+        "Meta": 68098
       },
       "PAT Margin": {
-        "Equinix": "8.7%",
-        "Digital Realty": "10.5%",
-        "CoreWeave": "-22.7%",
+        "Equinix": "15.6%",
+        "Digital Realty": "11.7%",
+        "CoreWeave": "-25.4%",
         "Fermi": "0.0%",
-        "NextDC": "-11.0%",
+        "NextDC": "16.5%",
         "Applied Digital": "-40.9%",
         "IREN": "-99.4%",
-        "Hut 8": "-96.2%",
-        "Nebius": "5.5%",
-        "Meta": "30.1%"
+        "Hut 8": "-188.7%",
+        "Nebius": "4.5%",
+        "Meta": "29.8%"
       },
       "3Y PAT CAGR": {
         "Equinix": "17.5%",
@@ -259,112 +259,112 @@
         "Meta": "37.6%"
       },
       "RoE (%)": {
-        "Equinix": "18.0%",
+        "Equinix": "10.8%",
         "Digital Realty": "2.7%",
         "CoreWeave": "N/A",
         "Fermi": "-20.7%",
         "NextDC": "N/A",
         "Applied Digital": "N/A",
         "IREN": "-23.4%",
-        "Hut 8": "-18.9%",
-        "Nebius": "2.1%",
-        "Meta": "30.2%"
+        "Hut 8": "-38.2%",
+        "Nebius": "0.8%",
+        "Meta": "29.9%"
       },
       "Net Debt ($M)": {
-        "Equinix": 14400,
-        "Digital Realty": 12830,
-        "CoreWeave": 26661,
+        "Equinix": 19765,
+        "Digital Realty": 16771,
+        "CoreWeave": 46069,
         "Fermi": 445,
-        "NextDC": 144,
+        "NextDC": 1717,
         "Applied Digital": 3508,
-        "IREN": 582,
-        "Hut 8": 364,
-        "Nebius": 450,
-        "Meta": 2305
+        "IREN": 1943.9,
+        "Hut 8": 7501.5,
+        "Nebius": 503.6,
+        "Meta": 22058
       },
       "Net Debt/EBITDA": {
-        "Equinix": "3.2x",
-        "Digital Realty": "5.6x",
-        "CoreWeave": "11.1x",
+        "Equinix": "4.0x",
+        "Digital Realty": "4.6x",
+        "CoreWeave": "10.5x",
         "Fermi": "N/A",
-        "NextDC": "1.1x",
-        "Applied Digital": "-20.8x",
-        "IREN": "—",
-        "Hut 8": "-2.7x",
-        "Nebius": "—",
-        "Meta": "0.0x"
+        "NextDC": "9.9x",
+        "Applied Digital": "32.7x",
+        "IREN": "7.9x",
+        "Hut 8": "N/A",
+        "Nebius": "1.3x",
+        "Meta": "0.2x"
       },
       "Net Debt/Equity": {
-        "Equinix": "1.0x",
+        "Equinix": "1.4x",
         "Digital Realty": "0.6x",
-        "CoreWeave": "8.0x",
+        "CoreWeave": "9.2x",
         "Fermi": "0.4x",
-        "NextDC": "0.1x",
+        "NextDC": "0.4x",
         "Applied Digital": "2.0x",
-        "IREN": "0.2x",
-        "Hut 8": "0.2x",
+        "IREN": "0.5x",
+        "Hut 8": "4.3x",
         "Nebius": "0.1x",
-        "Meta": "0.0x"
+        "Meta": "0.1x"
       },
       "G&A costs ($M)": {
-        "Equinix": 1766,
-        "Digital Realty": 480,
-        "CoreWeave": 651,
+        "Equinix": 1857,
+        "Digital Realty": 618,
+        "CoreWeave": 644,
         "Fermi": 193,
-        "NextDC": 41,
+        "NextDC": 54,
         "Applied Digital": 332.1,
         "IREN": 449.1,
-        "Hut 8": 122.8,
-        "Nebius": 378.5,
-        "Meta": 12152
+        "Hut 8": 229.4,
+        "Nebius": 567.1,
+        "Meta": 15431
       },
       "G&A % of Revenue": {
-        "Equinix": "19.0%",
-        "Digital Realty": "8.0%",
-        "CoreWeave": "12.7%",
+        "Equinix": "18.9%",
+        "Digital Realty": "9.1%",
+        "CoreWeave": "8.5%",
         "Fermi": "N/A",
-        "NextDC": "14.0%",
-        "Applied Digital": "54.3%",
+        "NextDC": "15.6%",
+        "Applied Digital": "54.4%",
         "IREN": "63.5%",
-        "Hut 8": "52.2%",
-        "Nebius": "71.0%",
-        "Meta": "6.1%"
+        "Hut 8": "72.1%",
+        "Nebius": "41.9%",
+        "Meta": "6.8%"
       },
       "PAT/MW": {
-        "Equinix": 0.43,
-        "Digital Realty": 0.22,
-        "CoreWeave": -1.33,
+        "Equinix": 0.81,
+        "Digital Realty": 0.26,
+        "CoreWeave": -1.29,
         "Fermi": -0.97,
-        "NextDC": -0.15,
-        "Applied Digital": -0.48,
+        "NextDC": 0.2,
+        "Applied Digital": -0.65,
         "IREN": -0.87,
-        "Hut 8": -0.22,
-        "Nebius": 0.17,
-        "Meta": 20.15
+        "Hut 8": -0.85,
+        "Nebius": 0.36,
+        "Meta": 22.7
       },
       "Net debt/MW": {
-        "Equinix": 7.58,
-        "Digital Realty": 4.75,
-        "CoreWeave": 29.62,
+        "Equinix": 10.4,
+        "Digital Realty": 5.41,
+        "CoreWeave": 30.71,
         "Fermi": 2.01,
-        "NextDC": 0.69,
+        "NextDC": 5.96,
         "Applied Digital": 9.09,
-        "IREN": 0.72,
-        "Hut 8": 0.36,
-        "Nebius": 2.64,
-        "Meta": 0.77
+        "IREN": 2.4,
+        "Hut 8": 10.57,
+        "Nebius": 2.96,
+        "Meta": 7.35
       },
       "EBITDA/MW": {
-        "Equinix": 2.38,
-        "Digital Realty": 0.74,
-        "CoreWeave": 2.68,
+        "Equinix": 2.62,
+        "Digital Realty": 1.17,
+        "CoreWeave": 2.93,
         "Fermi": -0.87,
-        "NextDC": 0.64,
-        "Applied Digital": -0.17,
+        "NextDC": 0.6,
+        "Applied Digital": 0.28,
         "IREN": 0.3,
-        "Hut 8": -0.21,
-        "Nebius": -0.38,
-        "Meta": 33.96
+        "Hut 8": -0.31,
+        "Nebius": 2.21,
+        "Meta": 36.55
       },
       "FCF/MW": {
         "Equinix": 0.3,
@@ -395,41 +395,41 @@
       "MW/FTE": {
         "Equinix": 0.14,
         "Digital Realty": 0.72,
-        "CoreWeave": 0.39,
+        "CoreWeave": 0.69,
         "Fermi": 3.17,
-        "NextDC": 0.46,
+        "NextDC": 0.64,
         "Applied Digital": 1.51,
         "IREN": 1.18,
-        "Hut 8": 4.11,
+        "Hut 8": 2.86,
         "Nebius": 0.12,
         "Meta": 0.04
       },
       "Revenue ($M)/FTE": {
-        "Equinix": 0.67,
-        "Digital Realty": 1.38,
-        "CoreWeave": 2.34,
+        "Equinix": 0.71,
+        "Digital Realty": 1.58,
+        "CoreWeave": 3.47,
         "Fermi": 0,
-        "NextDC": 0.63,
+        "NextDC": 0.77,
         "Applied Digital": 2.39,
         "IREN": 1.03,
-        "Hut 8": 0.95,
-        "Nebius": 0.39,
-        "Meta": 2.55
+        "Hut 8": 1.28,
+        "Nebius": 0.99,
+        "Meta": 3.02
       },
       "EBITDA ($M)/FTE": {
-        "Equinix": 0.33,
-        "Digital Realty": 0.53,
-        "CoreWeave": 1.1,
+        "Equinix": 0.36,
+        "Digital Realty": 0.85,
+        "CoreWeave": 2.01,
         "Fermi": -2.76,
-        "NextDC": 0.3,
-        "Applied Digital": -0.66,
+        "NextDC": 0.39,
+        "Applied Digital": 0.42,
         "IREN": 0.36,
         "Hut 8": -0.88,
-        "Nebius": -0.05,
-        "Meta": 1.29
+        "Nebius": 0.27,
+        "Meta": 1.45
       },
       "Total employees": {
-        "Equinix": 13931,
+        "Equinix": 13716,
         "Digital Realty": 4282,
         "CoreWeave": 2189,
         "Fermi": 70,
@@ -438,7 +438,7 @@
         "IREN": 685,
         "Hut 8": 248,
         "Nebius": 1371,
-        "Meta": 78865
+        "Meta": 75472
       },
       "Sales & BD %": {
         "Equinix": 20,
@@ -503,15 +503,77 @@
     }
   },
   "sources": {
-    "Equinix": {},
-    "Digital Realty": {},
-    "CoreWeave": {},
+    "Equinix": {
+      "Revenue ($M)": "https://www.sec.gov/Archives/edgar/data/1101239/000110123926000147/eqix-20260630.htm",
+      "EBITDA ($M)": "https://www.sec.gov/Archives/edgar/data/1101239/000110123926000147/eqix-20260630.htm",
+      "PAT ($M)": "https://www.sec.gov/Archives/edgar/data/1101239/000110123926000147/eqix-20260630.htm",
+      "Net Debt ($M)": "https://www.sec.gov/Archives/edgar/data/1101239/000110123926000147/eqix-20260630.htm",
+      "G&A costs ($M)": "https://www.sec.gov/Archives/edgar/data/1101239/000110123926000147/eqix-20260630.htm",
+      "Total employees": "https://www.sec.gov/Archives/edgar/data/1101239/000110123926000032/eqix-20251231.htm",
+      "Net Debt/Equity": "https://www.sec.gov/Archives/edgar/data/1101239/000110123926000147/eqix-20260630.htm",
+      "RoE (%)": "https://www.sec.gov/Archives/edgar/data/1101239/000110123926000147/eqix-20260630.htm",
+      "ROIC": "https://www.sec.gov/Archives/edgar/data/1101239/000110123926000147/eqix-20260630.htm"
+    },
+    "Digital Realty": {
+      "Revenue ($M)": "https://www.sec.gov/Archives/edgar/data/1297996/000110465926089296/dlr-20260630x10q.htm",
+      "EBITDA ($M)": "https://www.sec.gov/Archives/edgar/data/1297996/000110465926086270/dlr-20260723xex99d1.htm",
+      "PAT ($M)": "https://www.sec.gov/Archives/edgar/data/1297996/000110465926089296/dlr-20260630x10q.htm",
+      "Net Debt ($M)": "https://www.sec.gov/Archives/edgar/data/1297996/000110465926089296/dlr-20260630x10q.htm",
+      "G&A costs ($M)": "https://www.sec.gov/Archives/edgar/data/1297996/000110465926089296/dlr-20260630x10q.htm",
+      "Installed IT capacity (MW)": "https://www.sec.gov/Archives/edgar/data/1297996/000110465926086270/dlr-20260723xex99d1.htm"
+    },
+    "CoreWeave": {
+      "Revenue ($M)": "https://www.sec.gov/Archives/edgar/data/1769628/000176962826000366/crwv-20260630.htm",
+      "EBITDA ($M)": "https://www.sec.gov/Archives/edgar/data/1769628/000176962826000362/coreweave2q26earningspress.htm",
+      "PAT ($M)": "https://www.sec.gov/Archives/edgar/data/1769628/000176962826000366/crwv-20260630.htm",
+      "Net Debt ($M)": "https://www.sec.gov/Archives/edgar/data/1769628/000176962826000366/crwv-20260630.htm",
+      "G&A costs ($M)": "https://www.sec.gov/Archives/edgar/data/1769628/000176962826000366/crwv-20260630.htm",
+      "Net Debt/Equity": "https://www.sec.gov/Archives/edgar/data/1769628/000176962826000366/crwv-20260630.htm"
+    },
     "Fermi": {},
-    "NextDC": {},
-    "Applied Digital": {},
-    "IREN": {},
-    "Hut 8": {},
-    "Nebius": {},
-    "Meta": {}
+    "NextDC": {
+      "Revenue ($M)": "https://announcements.asx.com.au/asxpdf/20260827/pdf/073c04gt4ts40y.pdf",
+      "EBITDA ($M)": "https://announcements.asx.com.au/asxpdf/20260827/pdf/073c04gt4ts40y.pdf",
+      "PAT ($M)": "https://announcements.asx.com.au/asxpdf/20260827/pdf/073c027z036kht.pdf",
+      "Net Debt ($M)": "https://announcements.asx.com.au/asxpdf/20260827/pdf/073c027z036kht.pdf",
+      "G&A costs ($M)": "https://announcements.asx.com.au/asxpdf/20260827/pdf/073c08w3kby6d5.pdf",
+      "Installed IT capacity (MW)": "https://announcements.asx.com.au/asxpdf/20260827/pdf/073c04gt4ts40y.pdf",
+      "Net Debt/Equity": "https://announcements.asx.com.au/asxpdf/20260827/pdf/073c027z036kht.pdf"
+    },
+    "Applied Digital": {
+      "EBITDA ($M)": "https://www.sec.gov/Archives/edgar/data/1144879/000114487926000048/apld-20260531.htm"
+    },
+    "IREN": {
+      "Net Debt ($M)": "https://www.sec.gov/Archives/edgar/data/1878848/000187884826000052/iren-20260630.htm",
+      "Net Debt/Equity": "https://www.sec.gov/Archives/edgar/data/1878848/000187884826000052/iren-20260630.htm"
+    },
+    "Hut 8": {
+      "Revenue ($M)": "https://www.sec.gov/Archives/edgar/data/1964789/000110465926090025/hut-20260630x10q.htm",
+      "PAT ($M)": "https://www.sec.gov/Archives/edgar/data/1964789/000110465926090025/hut-20260630x10q.htm",
+      "Net Debt ($M)": "https://www.sec.gov/Archives/edgar/data/1964789/000110465926090025/hut-20260630x10q.htm",
+      "G&A costs ($M)": "https://www.sec.gov/Archives/edgar/data/1964789/000110465926090025/hut-20260630x10q.htm",
+      "Installed IT capacity (MW)": "https://www.sec.gov/Archives/edgar/data/1964789/000110465926090025/hut-20260630x10q.htm",
+      "Pipeline capacity (MW)": "https://www.sec.gov/Archives/edgar/data/1964789/000110465926090041/tm2621890d1_ex99-1.htm",
+      "Net Debt/Equity": "https://www.sec.gov/Archives/edgar/data/1964789/000110465926090025/hut-20260630x10q.htm",
+      "RoE (%)": "https://www.sec.gov/Archives/edgar/data/1964789/000110465926090025/hut-20260630x10q.htm"
+    },
+    "Nebius": {
+      "Revenue ($M)": "https://www.sec.gov/Archives/edgar/data/1513845/000110465926094568/tm2622968d1_ex99-1.htm",
+      "EBITDA ($M)": "https://www.sec.gov/Archives/edgar/data/1513845/000110465926094568/tm2622968d1_ex99-1.htm",
+      "PAT ($M)": "https://www.sec.gov/Archives/edgar/data/1513845/000110465926094568/tm2622968d1_ex99-1.htm",
+      "Net Debt ($M)": "https://www.sec.gov/Archives/edgar/data/1513845/000110465926094844/nbis-20260812xex99d2.htm",
+      "G&A costs ($M)": "https://www.sec.gov/Archives/edgar/data/1513845/000110465926094844/nbis-20260812xex99d2.htm",
+      "RoE (%)": "https://www.sec.gov/Archives/edgar/data/1513845/000110465926094844/nbis-20260812xex99d2.htm"
+    },
+    "Meta": {
+      "Revenue ($M)": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026050705/meta-20260630.htm",
+      "EBITDA ($M)": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026050705/meta-20260630.htm",
+      "PAT ($M)": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026050705/meta-20260630.htm",
+      "Net Debt ($M)": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026050705/meta-20260630.htm",
+      "G&A costs ($M)": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026050705/meta-20260630.htm",
+      "Total employees": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026050596/meta-06302026xexhibit991.htm",
+      "Net Debt/Equity": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026050705/meta-20260630.htm",
+      "RoE (%)": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026050705/meta-20260630.htm"
+    }
   }
 }
