@@ -40,14 +40,14 @@ if (-not (Get-ChildItem -Path $OutputDir -Filter '*.xlsx' | Where-Object { $_.Na
     Write-Host 'Copy DC_benchmarking_06092026_v1_Raw_data.xlsx into it; updates start from that file.' -ForegroundColor Yellow
 }
 
-# 5. Schedule a daily run. If the laptop is off at 10:00, it runs as soon as it is on again.
+# 5. Schedule a daily run. If the laptop is off at 12:55, it runs as soon as it is on again.
 $action   = New-ScheduledTaskAction -Execute $pythonw -Argument "`"$script`"" -WorkingDirectory $InstallTo
-$trigger  = New-ScheduledTaskTrigger -Daily -At '10:00'
+$trigger  = New-ScheduledTaskTrigger -Daily -At '12:55'
 $settings = New-ScheduledTaskSettingsSet -StartWhenAvailable -AllowStartIfOnBatteries `
             -DontStopIfGoingOnBatteries -ExecutionTimeLimit (New-TimeSpan -Minutes 30)
 Register-ScheduledTask -TaskName $TaskName -Action $action -Trigger $trigger -Settings $settings `
     -Description 'Creates a new DC benchmarking Excel version after an approved data update.' -Force | Out-Null
-Write-Host "Scheduled task '$TaskName' created (daily at 10:00)."
+Write-Host "Scheduled task '$TaskName' created (daily at 12:55)."
 
 # 6. First run: remembers today's approved data as the starting point.
 & $python $script
