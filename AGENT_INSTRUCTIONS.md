@@ -25,6 +25,13 @@ Every other Sunday. Each run is independent: read this file and `data.json` fres
      recalculate the derived metrics (see below).
    - For every value you change, record the source in `sources[company][metric]` as a
      direct link to the filing or page (not a search result).
+   - For every value you change, also record in `methods[company][metric]` one or two
+     plain sentences on how you got it: which figures from the document, the arithmetic,
+     and any currency conversion. Example: `"LTM Jun 2026 = FY2025 + H1 2026 − H1 2025:
+     9,217 + 5,069 − 4,481 = 9,805 (FY25 10-K; Jun-26 10-Q income statement)."` For a
+     number copied as-is, say where it appears (e.g. `"Headcount at 31 Dec 2025, FY25
+     10-K, Human Capital section."`). These notes fill the Sources tab of the owner's
+     Excel file.
    - Open a pull request to `main` titled `Data update — <date> — <companies>`.
 5. The pull request description must contain a table with one row per changed value:
 
@@ -80,6 +87,6 @@ unclear, leave them unchanged and mention that in the pull request.
 
 ## Never
 
-- Never change `index.html`, logos or layout.
+- Never change `index.html`, logos, layout or anything in `excel-updater/`.
 - Never merge your own pull request or push to `main`.
 - Never invent a number. If a figure cannot be sourced, leave the old value and say so.
