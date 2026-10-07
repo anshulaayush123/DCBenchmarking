@@ -6,7 +6,8 @@ merges a pull request. If data.json differs from the copy saved at the last run,
 
   1. opens the latest workbook in the output folder,
   2. writes every changed value into the "Benchmarking" tab and highlights it with a
-     note "Updated DD/MM/YYYY (was ...)",
+     note "Updated DD/MM/YYYY (was ...)". A renamed company gets its column heading
+     changed and highlighted the same way,
   3. rebuilds the "Sources" tab: the same grid, where each cell shows how the value was
      calculated and links to the source document,
   4. saves the result as DC_benchmarking_Claude_DDMMYYYY_vX.xlsx in the same folder.
@@ -182,13 +183,51 @@ def next_output_path(folder, today):
 
 def clear_old_highlights(ws):
     """Give last update's highlighted cells back the normal fill of their row."""
-    for row in ws.iter_rows(min_row=HEADER_ROW + 1, min_col=FIRST_DATA_COL):
+    for row in ws.iter_rows(min_row=HEADER_ROW, min_col=FIRST_DATA_COL):
         for cell in row:
             if cell.fill.fgColor.rgb == HIGHLIGHT.fgColor.rgb:
                 label = ws.cell(cell.row, LABEL_COL)
                 cell.fill = copy.copy(label.fill)
                 if cell.font.color is not None and cell.font.color.rgb == DARK:
                     cell.font = copy.copy(label.font)
+
+
+def highlight(cell, note):
+    cell.fill = HIGHLIGHT
+    if cell.font.color is not None and cell.font.color.rgb == WHITE:
+        # White header text (company names, the period row) is unreadable on yellow.
+        font = copy.copy(cell.font)
+        font.color = DARK
+        cell.font = font
+    cell.comment = Comment(note, "Claude", width=220, height=60)
+
+
+def find_renames(old, new):
+    """{old name: new name} for companies renamed in place in the companies list.
+
+    A company counts as renamed when the name at a position in the list changed, the
+    old name is gone and the new name did not exist before.
+    """
+    old_names = [c["name"] for c in old.get("companies", [])]
+    new_names = [c["name"] for c in new.get("companies", [])]
+    return {o: n for o, n in zip(old_names, new_names)
+            if o != n and o not in new_names and n not in old_names}
+
+
+def apply_renames(ws, renames, today):
+    """Change the company's column heading and highlight it."""
+    columns, _ = grid(ws)
+    renamed = []
+    for old_name, new_name in renames.items():
+        col = columns.get(old_name)
+        if not col:
+            log.warning("No column headed %s in the workbook; rename skipped.", old_name)
+            continue
+        cell = ws.cell(HEADER_ROW, col)
+        cell.value = new_name
+        highlight(cell, f"Renamed {today:%d/%m/%Y} (was {old_name})")
+        renamed.append((HEADER_ROW, col))
+    return renamed
 
 
 def apply_changes(ws, changes, today):
@@ -202,15 +241,7 @@ def apply_changes(ws, changes, today):
         cell = ws.cell(row, col)
         was = cell.value
         cell.value = to_cell_value(metric, new)
-        cell.fill = HIGHLIGHT
-        if cell.font.color is not None and cell.font.color.rgb == WHITE:
-            # White header text (the period row) is unreadable on yellow.
-            font = copy.copy(cell.font)
-            font.color = DARK
-            cell.font = font
-        cell.comment = Comment(
-            f"Updated {today:%d/%m/%Y} (was {describe(was, cell.number_format)})", "Claude",
-            width=220, height=60)
+        highlight(cell, f"Updated {today:%d/%m/%Y} (was {describe(was, cell.number_format)})")
         written.append((row, col))
     return written, skipped
 
@@ -321,20 +352,27 @@ def fetch_remote():
 
 
 def run(old, new, base, output_dir, today):
-    old_values, new_values = flatten(old), flatten(new)
+    renames = find_renames(old, new)
+    # Compare a renamed company's values under its new name, so only real changes count.
+    old_values = {(renames.get(company, company), metric): value
+                  for (company, metric), value in flatten(old).items()}
+    new_values = flatten(new)
     changes = {key: (old_values.get(key), value) for key, value in new_values.items()
                if old_values.get(key) != value}
-    if not changes:
+    if not changes and not renames:
         log.info("data.json has not changed since the last run; nothing to do.")
         return None
 
     wb = openpyxl.load_workbook(base)
     ws = wb[DATA_SHEET]
     clear_old_highlights(ws)
+    renamed = apply_renames(ws, renames, today)
     written, skipped = apply_changes(ws, changes, today)
     for item in skipped:
         log.warning("No matching cell in the workbook for %s; skipped.", item)
-    build_sources(wb, new, set(written), today)
+    for old_name, new_name in renames.items():
+        log.info("Renamed %s to %s.", old_name, new_name)
+    build_sources(wb, new, set(written) | set(renamed), today)
     for name in wb.sheetnames:
         wb[name].sheet_view.tabSelected = name == DATA_SHEET
     wb.active = wb.sheetnames.index(DATA_SHEET)
