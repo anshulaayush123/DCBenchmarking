@@ -27,6 +27,7 @@ import json
 import logging
 import os
 import re
+import subprocess
 import sys
 import urllib.parse
 import urllib.request
@@ -36,7 +37,11 @@ import openpyxl
 from openpyxl.comments import Comment
 from openpyxl.styles import Alignment, Font, PatternFill
 
-DATA_URL = "https://raw.githubusercontent.com/anshulaayush123/DCBenchmarking/main/data.json"
+# Same file, two addresses: if a network blocks one host, the other may still work.
+DATA_URLS = [
+    "https://raw.githubusercontent.com/anshulaayush123/DCBenchmarking/main/data.json",
+    "https://anshulaayush123.github.io/DCBenchmarking/data.json",
+]
 OUTPUT_DIR = (r"C:\Users\AnshulApurva_\OneDrive - Data Volt Investment LLC\Desktop"
               r"\Anshul + Usamah\Internal Strategy materials\DCs Bechmarking exercise"
               r"\Claude versions")
@@ -280,9 +285,39 @@ def build_sources(wb, data, changed_cells, today):
 
 
 def fetch_remote():
-    request = urllib.request.Request(DATA_URL, headers={"Cache-Control": "no-cache"})
-    with urllib.request.urlopen(request, timeout=60) as response:
-        return json.loads(response.read().decode("utf-8"))
+    """Download data.json from main.
+
+    Python's own downloader does not use the Windows proxy settings (for example a
+    company proxy set up by IT), so when it fails we ask Windows PowerShell to download
+    the file instead: it uses the same network settings as the browser.
+    """
+    errors = []
+    for url in DATA_URLS:
+        try:
+            request = urllib.request.Request(url, headers={"Cache-Control": "no-cache"})
+            with urllib.request.urlopen(request, timeout=30) as response:
+                return json.loads(response.read().decode("utf-8"))
+        except Exception as exc:  # noqa: BLE001 - any failure falls through to the next way
+            errors.append(f"Python download from {url}: {exc}")
+    if os.name == "nt":
+        target = STATE_DIR / "downloaded_data.json"
+        for url in DATA_URLS:
+            command = (
+                "[Net.ServicePointManager]::SecurityProtocol = 'Tls12'; "
+                "$p = [Net.WebRequest]::GetSystemWebProxy(); "
+                "$p.Credentials = [Net.CredentialCache]::DefaultNetworkCredentials; "
+                "[Net.WebRequest]::DefaultWebProxy = $p; "
+                f"Invoke-WebRequest -UseBasicParsing -TimeoutSec 60 -Uri '{url}' "
+                f"-OutFile '{target}'")
+            result = subprocess.run(
+                ["powershell", "-NoProfile", "-NonInteractive", "-Command", command],
+                capture_output=True, text=True, timeout=120,
+                creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0))
+            if result.returncode == 0 and target.exists():
+                log.info("Downloaded data.json through Windows network settings.")
+                return json.loads(target.read_text("utf-8-sig"))
+            errors.append(f"Windows download from {url}: {result.stderr.strip()[:300]}")
+    raise ConnectionError("Could not download data.json:\n  " + "\n  ".join(errors))
 
 
 def run(old, new, base, output_dir, today):
