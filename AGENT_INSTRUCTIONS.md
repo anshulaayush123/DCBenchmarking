@@ -14,7 +14,7 @@ Every other Sunday. Each run is independent: read this file and `data.json` fres
 ## Steps for each run
 
 1. Read `data.json`. For each company, note the reporting period in `companies[].period`
-   (e.g. `FY2025`, `LTM Jun 2026`).
+   (e.g. `FY2025`, `TTM Jun 2026`).
 2. For each of the 10 companies, look for results published **after** that period:
    quarterly, half-year or annual reports, plus investor presentations for capacity
    (MW), customer and headcount figures.
@@ -27,7 +27,7 @@ Every other Sunday. Each run is independent: read this file and `data.json` fres
      direct link to the filing or page (not a search result).
    - For every value you change, also record in `methods[company][metric]` one or two
      plain sentences on how you got it: which figures from the document, the arithmetic,
-     and any currency conversion. Example: `"LTM Jun 2026 = FY2025 + H1 2026 − H1 2025:
+     and any currency conversion. Example: `"TTM Jun 2026 = FY2025 + H1 2026 − H1 2025:
      9,217 + 5,069 − 4,481 = 9,805 (FY25 10-K; Jun-26 10-Q income statement)."` For a
      number copied as-is, say where it appears (e.g. `"Headcount at 31 Dec 2025, FY25
      10-K, Human Capital section."`). These notes fill the Sources tab of the owner's
@@ -55,9 +55,9 @@ Every other Sunday. Each run is independent: read this file and `data.json` fres
 ## Data rules
 
 - **Units:** money in USD millions.
-- **Period:** use the more recent of the latest full fiscal year or the last twelve
-  months (LTM). Label the period clearly in `companies[].period`, e.g. `"FY2025"` or
-  `"LTM Jun 2026"`.
+- **Period:** use the more recent of the latest full fiscal year or the trailing twelve
+  months (TTM). Label the period clearly in `companies[].period`, e.g. `"FY2025"` or
+  `"TTM Jun 2026"`.
 - **EBITDA:** use the company's reported *adjusted* EBITDA, with the same definition per
   company over time.
 - **EV/EBITDA:** refresh only when new results come out.

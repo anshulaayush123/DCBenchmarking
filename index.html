@@ -40,7 +40,6 @@ h1{font-family:'Space Grotesk',sans-serif;font-size:clamp(26px,4vw,38px);font-we
 .ms-item:hover{background:var(--line);}
 .ms-item .dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
 .logo{display:inline-block;width:24px;height:24px;border-radius:5px;background:#fff;object-fit:contain;padding:2px;flex-shrink:0;vertical-align:middle;}
-th .co{display:inline-flex;align-items:center;gap:6px;}
 .ms-item input{accent-color:var(--turq);}
 .ms-item span.nm{flex:1;}
 .ms-item span.yr{color:var(--muted);font-family:'IBM Plex Mono',monospace;font-size:11px;}
@@ -51,19 +50,9 @@ th .co{display:inline-flex;align-items:center;gap:6px;}
 @media(max-width:820px){.grid2{grid-template-columns:minmax(0,1fr);}}
 .chartbox{position:relative;height:320px;}
 .chartbox.tall{height:360px;}
-.tabs{display:flex;gap:2px;margin-bottom:16px;border-bottom:1px solid var(--line);flex-wrap:wrap;}
-.tab{font-family:'IBM Plex Mono',monospace;font-size:12.5px;padding:9px 16px;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;}
-.tab.on{color:var(--turq);border-bottom-color:var(--turq);font-weight:600;}
-.tblwrap{overflow-x:auto;border:1px solid var(--line);border-radius:4px;}
-table{border-collapse:collapse;width:100%;min-width:900px;font-family:'IBM Plex Mono',monospace;font-size:12.5px;}
-th,td{padding:8px 10px;text-align:right;white-space:nowrap;border-bottom:1px solid var(--line);}
-th:first-child,td:first-child{text-align:left;position:sticky;left:0;background:var(--panel);font-family:'Inter',sans-serif;font-size:12.5px;color:var(--text);z-index:1;min-width:150px;}
-thead th{color:var(--turq);font-weight:700;background:var(--panel2);position:sticky;top:0;z-index:2;}
-thead th:first-child{z-index:3;}
-tbody tr:hover td{background:var(--panel2);}
-td{color:var(--text);}
-td.neg{color:#CC0000;font-weight:600;}
-tbody td:first-child{background:var(--panel2);color:var(--turq);font-weight:700;}
+.periods{display:flex;flex-wrap:wrap;gap:8px;}
+.period{display:inline-flex;align-items:center;gap:6px;font-family:'IBM Plex Mono',monospace;font-size:12.5px;padding:6px 12px;border:1px solid var(--line);border-radius:20px;background:var(--panel2);color:var(--text);}
+.period b{color:var(--turq);font-weight:600;}
 .foot{margin-top:28px;font-size:12px;color:var(--muted);font-family:'IBM Plex Mono',monospace;}
 .ribbon{display:flex;gap:4px;border-bottom:1px solid var(--line);margin-bottom:24px;overflow-x:auto;}
 .ribbon-item{font-family:'Space Grotesk',sans-serif;font-size:14.5px;font-weight:600;padding:12px 18px;color:var(--muted);cursor:pointer;border-bottom:3px solid transparent;user-select:none;transition:.15s;white-space:nowrap;}
@@ -83,14 +72,14 @@ tbody td:first-child{background:var(--panel2);color:var(--turq);font-weight:700;
 <header>
 <div class="eyebrow">LIVE FILE · USD MILLIONS UNLESS NOTED</div>
 <h1>Data Center Operators<br>Benchmarking</h1>
-<div class="sub">Capacity, financials, leverage and headcount across 10 operators — from hyperscale colocation incumbents to newly listed AI-cloud infrastructure players. Figures are the latest reported fiscal period per company.</div>
+<div class="sub">Capacity, financials, leverage and headcount across 10 operators — from hyperscale colocation incumbents to newly listed AI-cloud infrastructure players. Financial figures are each company's latest full financial year or trailing twelve months (TTM), whichever is more recent.</div>
 </header>
 
 <div class="panel filterbar">
   <div class="filter-head">
     <div>
       <div class="filter-label">OPERATOR SELECTION</div>
-      <div class="desc" style="margin-bottom:0">Pick operators — the choice applies to every chart and table on all three tabs.</div>
+      <div class="desc" style="margin-bottom:0">Pick operators — the choice applies to every chart on all three tabs.</div>
     </div>
     <div class="ms-wrap" id="msWrap">
       <button class="ms-btn" id="msBtn" type="button">All 10 selected <span class="ms-caret">▾</span></button>
@@ -132,12 +121,15 @@ tbody td:first-child{background:var(--panel2);color:var(--turq);font-weight:700;
     <div class="desc">In $M / $B. Next-3Y shown only where a numeric guide is disclosed. Bars marked // are outliers shortened to fit — the label shows the true value.</div>
     <div class="chartbox tall"><canvas id="cCapex"></canvas></div>
   </div>
-  <div class="sect">RAW DATA</div>
-  <div class="panel"><h2>Full data table</h2><div class="desc">All benchmarked metrics by company and category.</div><div class="tblhost"></div></div>
 </div>
 
 <!-- FINANCIAL -->
 <div class="view" data-view="Financial">
+  <div class="panel">
+    <h2>Basis of financial figures</h2>
+    <div class="desc">Each company's figures are its latest full financial year (FY) or trailing twelve months (TTM), whichever is more recent. The period used for each company:</div>
+    <div class="periods" id="finBasis"></div>
+  </div>
   <div class="grid2">
     <div class="panel">
       <h2>Revenue vs. EBITDA margin</h2>
@@ -187,8 +179,6 @@ tbody td:first-child{background:var(--panel2);color:var(--turq);font-weight:700;
       <div class="chartbox"><canvas id="fNd"></canvas></div>
     </div>
   </div>
-  <div class="sect">RAW DATA</div>
-  <div class="panel"><h2>Full data table</h2><div class="desc">All benchmarked metrics by company and category.</div><div class="tblhost"></div></div>
 </div>
 
 <!-- FTE -->
@@ -215,8 +205,6 @@ tbody td:first-child{background:var(--panel2);color:var(--turq);font-weight:700;
     <div class="desc">Share of employees by function, 100% stacked.</div>
     <div class="chartbox" style="height:520px"><canvas id="hMix"></canvas></div>
   </div>
-  <div class="sect">RAW DATA</div>
-  <div class="panel"><h2>Full data table</h2><div class="desc">All benchmarked metrics by company and category.</div><div class="tblhost"></div></div>
 </div>
 
 </div>
@@ -423,6 +411,9 @@ function drawMw(){
     host.appendChild(b); }); })();
 // ---------- FINANCIAL ----------
 function drawFinancial(){
+  document.getElementById("finBasis").innerHTML = idxSel().map(i=>
+    `<span class="period">${logo(i)}${companies[i]} <b>${years[i]}</b></span>`).join("") ||
+    `<span class="desc">No operators selected.</span>`;
   const idx = idxSel();
   drawRevMargin("fRev");
   multiBar("fMargin", [
@@ -460,43 +451,10 @@ function drawFTE(){
     plugins:{legend:{position:"bottom", labels:{boxWidth:12,color:"#FFFFFF"}}}}});
 }
 
-// ---------- TABLES (one per view, with category sub-tabs) ----------
-function fmt(v){ return typeof v==="number" ? v.toLocaleString(undefined,{maximumFractionDigits:2}) : v; }
-const tableState = [];
-document.querySelectorAll(".view").forEach(view=>{
-  const host = view.querySelector(".tblhost");
-  const st = {group: view.dataset.view, host};
-  host.innerHTML = `<div class="tabs"></div><div class="tblwrap"><table></table></div>`;
-  const tabsEl = host.querySelector(".tabs");
-  Object.keys(groups).forEach(g=>{
-    const t = document.createElement("div");
-    t.className = "tab" + (g===st.group?" on":"");
-    t.textContent = g;
-    t.onclick = ()=>{ st.group=g; [...tabsEl.children].forEach(c=>c.classList.remove("on")); t.classList.add("on"); renderTable(st); };
-    tabsEl.appendChild(t);
-  });
-  tableState.push(st);
-});
-function renderTable(st){
-  const tbl = st.host.querySelector("table");
-  const data = groups[st.group];
-  const idx = idxSel();
-  if(idx.length===0){ tbl.innerHTML = `<tbody><tr><td style="padding:20px;color:var(--muted);">No operators selected.</td></tr></tbody>`; return; }
-  let html = "<thead><tr><th>Metric</th>" + idx.map(i=>`<th><span class="co">${logo(i)}${companies[i]}</span><br><span style="color:var(--muted);font-weight:400">${years[i]}</span></th>`).join("") + "</tr></thead><tbody>";
-  Object.entries(data).forEach(([metric, vals])=>{
-    html += `<tr><td>${metric}</td>` + idx.map(i=>{
-      const v = vals[i];
-      const neg = (typeof v==="number" && v<0) || (typeof v==="string" && v.trim().startsWith("-"));
-      return `<td class="${neg?'neg':''}">${fmt(v)}</td>`;
-    }).join("") + "</tr>";
-  });
-  tbl.innerHTML = html + "</tbody>";
-}
-
 // ---------- NAV + FILTER ----------
 let activeView = "Commercial";
 const drawers = {"Commercial":drawCommercial, "Financial":drawFinancial, "FTE / Headcount":drawFTE};
-function drawActive(){ drawers[activeView](); tableState.forEach(renderTable); }
+function drawActive(){ drawers[activeView](); }
 document.querySelectorAll(".ribbon-item").forEach(r=>{
   r.addEventListener("click", ()=>{
     activeView = r.dataset.view;
