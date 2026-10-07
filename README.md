@@ -16,3 +16,6 @@ financial and headcount metrics.
    links.
 3. The owner reviews the pull request and merges it.
 4. GitHub Pages republishes the site automatically.
+5. A scheduled task on the owner's laptop (`excel-updater/`) notices the merged update and
+   saves a new Excel version, `DC_benchmarking_Claude_DDMMYYYY_vX.xlsx`, with the changed
+   cells highlighted and a Sources tab showing each value's source link and calculation.
