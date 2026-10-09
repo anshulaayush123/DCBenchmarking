@@ -32,6 +32,24 @@ Copy-Item -Force (Join-Path $PSScriptRoot 'update_excel.py') $InstallTo
 $script = Join-Path $InstallTo 'update_excel.py'
 Write-Host "Script: $script"
 
+# 3b. A "run now" file that shows progress in a window, plus a Desktop shortcut to it.
+$runNow = Join-Path $InstallTo 'run_now.bat'
+Set-Content -Path $runNow -Encoding ASCII -Value @(
+    '@echo off',
+    'title DC Benchmarking - Excel update',
+    "`"$python`" `"$script`"",
+    'echo.',
+    'pause'
+)
+$desktop = [Environment]::GetFolderPath('Desktop')
+$shell = New-Object -ComObject WScript.Shell
+$link = $shell.CreateShortcut((Join-Path $desktop 'Update DC Benchmarking Excel.lnk'))
+$link.TargetPath = $runNow
+$link.WorkingDirectory = $InstallTo
+$link.Description = 'Check for an approved update and create the new Excel file now'
+$link.Save()
+Write-Host "Desktop shortcut: 'Update DC Benchmarking Excel'"
+
 # 4. Check the output folder and that a starting workbook is in it.
 if (-not (Test-Path $OutputDir)) { throw "Folder not found: $OutputDir" }
 if (-not (Get-ChildItem -Path $OutputDir -Filter '*.xlsx' | Where-Object { $_.Name -notlike '~$*' })) {
@@ -56,4 +74,6 @@ if ($LASTEXITCODE -ne 0) { throw "First run failed. See $InstallTo\update_excel.
 Write-Host ''
 Write-Host 'Done. After you merge a data update on GitHub, a new file appears in:' -ForegroundColor Green
 Write-Host "  $OutputDir"
+Write-Host "It runs by itself daily at 12:55. To run it now and watch each step, double-click"
+Write-Host "'Update DC Benchmarking Excel' on your Desktop."
 Write-Host "Log file: $InstallTo\update_excel.log"

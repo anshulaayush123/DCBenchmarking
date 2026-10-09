@@ -156,7 +156,11 @@ def grid(ws):
 
 
 def find_base_workbook(folder):
-    """Latest DC_benchmarking_Claude_* file, else the newest other .xlsx in the folder."""
+    """Latest DC_benchmarking_Claude_* file, else the newest other .xlsx in the folder.
+
+    Files without a Benchmarking tab (for example a process-flow sheet saved in the same
+    folder) are skipped.
+    """
     claude, others = [], []
     for path in Path(folder).glob("*.xlsx"):
         if path.name.startswith("~$"):
@@ -167,10 +171,15 @@ def find_base_workbook(folder):
             claude.append(((year, month, day, version), path))
         else:
             others.append((path.stat().st_mtime, path))
-    if claude:
-        return max(claude)[1]
-    if others:
-        return max(others)[1]
+    for _, path in sorted(claude, reverse=True) + sorted(others, reverse=True):
+        try:
+            names = openpyxl.load_workbook(path, read_only=True).sheetnames
+        except Exception as exc:  # noqa: BLE001 - unreadable file: try the next one
+            say(f"      Skipped {path.name}: could not open it ({exc}).")
+            continue
+        if DATA_SHEET in names:
+            return path
+        say(f"      Skipped {path.name}: it has no '{DATA_SHEET}' tab.")
     return None
 
 
@@ -206,28 +215,31 @@ def find_renames(old, new):
     """{old name: new name} for companies renamed in place in the companies list.
 
     A company counts as renamed when the name at a position in the list changed, the
-    old name is gone and the new name did not exist before.
+    old name is gone and the new name did not exist before, and its values moved to
+    the new name too (a rename done in only some places of data.json does not count).
     """
     old_names = [c["name"] for c in old.get("companies", [])]
     new_names = [c["name"] for c in new.get("companies", [])]
+    with_values = {company for company, _ in flatten(new) if _ != "Year"}
     return {o: n for o, n in zip(old_names, new_names)
-            if o != n and o not in new_names and n not in old_names}
+            if o != n and o not in new_names and n not in old_names
+            and n in with_values and o not in with_values}
 
 
 def apply_renames(ws, renames, today):
     """Change the company's column heading and highlight it."""
     columns, _ = grid(ws)
-    renamed = []
+    renamed, missing = [], []
     for old_name, new_name in renames.items():
         col = columns.get(old_name)
         if not col:
-            log.warning("No column headed %s in the workbook; rename skipped.", old_name)
+            missing.append(f"rename {old_name} -> {new_name} (no column headed {old_name})")
             continue
         cell = ws.cell(HEADER_ROW, col)
         cell.value = new_name
         highlight(cell, f"Renamed {today:%d/%m/%Y} (was {old_name})")
         renamed.append((HEADER_ROW, col))
-    return renamed
+    return renamed, missing
 
 
 def apply_changes(ws, changes, today):
@@ -345,13 +357,67 @@ def fetch_remote():
                 capture_output=True, text=True, timeout=120,
                 creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0))
             if result.returncode == 0 and target.exists():
-                log.info("Downloaded data.json through Windows network settings.")
+                say("      (downloaded through Windows network settings)")
                 return json.loads(target.read_text("utf-8-sig"))
             errors.append(f"Windows download from {url}: {result.stderr.strip()[:300]}")
     raise ConnectionError("Could not download data.json:\n  " + "\n  ".join(errors))
 
 
-def run(old, new, base, output_dir, today):
+def say(message=""):
+    """Show progress in the window (when there is one) and keep it in the log file."""
+    if sys.stdout is not None:
+        print(message, flush=True)
+    if message.strip():
+        log.info(message.strip())
+
+
+def check_names(data):
+    """Warn about a company renamed in only some places of data.json."""
+    listed = [c["name"] for c in data.get("companies", [])]
+    used = {company for metrics in data.get("metrics", {}).values()
+            for per_company in metrics.values() for company in per_company}
+    problems = []
+    for name in listed:
+        if name not in used:
+            problems.append(f"'{name}' is in the company list but has no values.")
+    for name in sorted(used - set(listed)):
+        problems.append(f"'{name}' has values but is not in the company list.")
+    return problems
+
+
+def verify(path, changes_written, renamed, today):
+    """Re-open the saved file and check it is what was asked for."""
+    wb = openpyxl.load_workbook(path)
+    ws, results = wb[DATA_SHEET], []
+    results.append((FILE_RE.match(path.name) is not None,
+                    f"File name follows DC_benchmarking_Claude_DDMMYYYY_vX: {path.name}"))
+    results.append((wb.sheetnames[:2] == [DATA_SHEET, SOURCES_SHEET],
+                    f"Tabs are '{DATA_SHEET}' and '{SOURCES_SHEET}'"))
+    stamp = f"{today:%d/%m/%Y}"
+    bad = [ws.cell(r, c).coordinate for (r, c), value in changes_written.items()
+           if ws.cell(r, c).value != value
+           or ws.cell(r, c).fill.fgColor.rgb != HIGHLIGHT.fgColor.rgb
+           or not ws.cell(r, c).comment or stamp not in ws.cell(r, c).comment.text]
+    results.append((not bad, f"{len(changes_written)} changed cells hold the new value, "
+                    f"are highlighted and carry an 'Updated {stamp}' note"
+                    + (f" (problem in {', '.join(bad)})" if bad else "")))
+    bad = [ws.cell(r, c).coordinate for r, c in renamed
+           if ws.cell(r, c).fill.fgColor.rgb != HIGHLIGHT.fgColor.rgb]
+    if renamed:
+        results.append((not bad, f"{len(renamed)} renamed heading(s) highlighted with a note"))
+    src = wb[SOURCES_SHEET]
+    bad = [src.cell(r, c).coordinate for r, c in changes_written
+           if not str(src.cell(r, c).value or "").startswith(f"Updated {stamp}")]
+    bad += [src.cell(r, c).coordinate for r, c in renamed
+            if src.cell(r, c).value != ws.cell(r, c).value]
+    results.append((not bad, "Sources tab marks every changed cell, with its calculation "
+                    "and a clickable link where one was recorded"
+                    + (f" (problem in {', '.join(bad)})" if bad else "")))
+    return results
+
+
+def run(old, new, workbook, output_dir, today):
+    """Write the changes into a new workbook. Returns (saved path or None, all checks ok)."""
     renames = find_renames(old, new)
     # Compare a renamed company's values under its new name, so only real changes count.
     old_values = {(renames.get(company, company), metric): value
@@ -359,28 +425,54 @@ def run(old, new, base, output_dir, today):
     new_values = flatten(new)
     changes = {key: (old_values.get(key), value) for key, value in new_values.items()
                if old_values.get(key) != value}
-    if not changes and not renames:
-        log.info("data.json has not changed since the last run; nothing to do.")
-        return None
 
+    for problem in check_names(new):
+        say(f"      WARNING: {problem} This looks like a rename done in only some places "
+            "of data.json; those values cannot be placed in the Excel file.")
+    if not changes and not renames:
+        say("      No approved changes since the last Excel file, so no new file is needed.")
+        return None, True
+    for old_name, new_name in renames.items():
+        say(f"      Renamed: {old_name} -> {new_name}")
+    for (company, metric), (was, now) in sorted(changes.items()):
+        say(f"      {company} | {metric}: {describe(was)} -> {describe(now)}")
+
+    say("[3/6] Opening the latest workbook in the folder")
+    base = workbook or find_base_workbook(output_dir)
+    if base is None:
+        raise FileNotFoundError(f"No usable workbook in {output_dir}. Put the latest Excel "
+                                "file (with a Benchmarking tab) there.")
+    say(f"      {base.name}")
     wb = openpyxl.load_workbook(base)
     ws = wb[DATA_SHEET]
     clear_old_highlights(ws)
-    renamed = apply_renames(ws, renames, today)
-    written, skipped = apply_changes(ws, changes, today)
+    renamed, skipped = apply_renames(ws, renames, today)
+    written, not_placed = apply_changes(ws, changes, today)
+    skipped += not_placed
+    say(f"[4/6] Writing changes into the '{DATA_SHEET}' tab: {len(written)} cell(s) updated "
+        f"and highlighted, {len(renamed)} heading(s) renamed")
     for item in skipped:
-        log.warning("No matching cell in the workbook for %s; skipped.", item)
-    for old_name, new_name in renames.items():
-        log.info("Renamed %s to %s.", old_name, new_name)
+        say(f"      NOT PLACED (no matching row or column in the workbook): {item}")
+    say(f"[5/6] Rebuilding the '{SOURCES_SHEET}' tab (calculation + source link per value)")
     build_sources(wb, new, set(written) | set(renamed), today)
     for name in wb.sheetnames:
         wb[name].sheet_view.tabSelected = name == DATA_SHEET
     wb.active = wb.sheetnames.index(DATA_SHEET)
 
     out = next_output_path(output_dir, today)
+    say(f"[6/6] Saving {out.name}")
     wb.save(out)
-    log.info("Saved %s (%d values changed, based on %s).", out.name, len(written), base.name)
-    return out
+
+    say("")
+    say("Checking the new file:")
+    written_values = {cell: ws.cell(*cell).value for cell in written}
+    results = verify(out, written_values, renamed, today)
+    for ok, text in results:
+        say(f"  [{'OK' if ok else 'PROBLEM'}] {text}")
+    say("  [OK] Older files were not changed (each update is saved as a new file)")
+    if skipped:
+        say(f"  [PROBLEM] {len(skipped)} change(s) could not be placed; see the list above")
+    return out, all(ok for ok, _ in results) and not skipped
 
 
 def main():
@@ -395,38 +487,54 @@ def main():
     STATE_DIR.mkdir(parents=True, exist_ok=True)
     logging.basicConfig(
         level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s",
-        handlers=[logging.FileHandler(STATE_DIR / "update_excel.log", encoding="utf-8"),
-                  logging.StreamHandler(sys.stdout)])
+        handlers=[logging.FileHandler(STATE_DIR / "update_excel.log", encoding="utf-8")])
     state_file = STATE_DIR / "last_data.json"
     testing = args.old is not None or args.new is not None
 
+    say("DC benchmarking - Excel update")
+    say("=" * 60)
     try:
+        say("[1/6] Downloading the approved data (data.json on main) from GitHub")
         new = json.loads(args.new.read_text("utf-8")) if args.new else fetch_remote()
+        say(f"      OK: {len(new.get('companies', []))} companies")
+
         if args.old:
             old = json.loads(args.old.read_text("utf-8"))
+            say(f"[2/6] Comparing with {args.old.name}")
         elif state_file.exists():
             old = json.loads(state_file.read_text("utf-8"))
+            seen = dt.datetime.fromtimestamp(state_file.stat().st_mtime)
+            say(f"[2/6] Comparing with the data used for the last update "
+                f"(saved {seen:%d/%m/%Y %H:%M})")
         else:
             state_file.write_text(json.dumps(new, indent=2), "utf-8")
-            log.info("First run: saved today's data.json as the starting point. "
-                     "The next approved update will create a new workbook.")
+            say("[2/6] First run: today's approved data is saved as the starting point.")
+            say("")
+            say("RESULT: set-up complete. The next approved update will create a new file.")
             return 0
 
         if not args.output_dir.is_dir():
-            log.error("Output folder not found: %s", args.output_dir)
+            say(f"RESULT: FAILED. Folder not found: {args.output_dir}")
             return 1
-        base = args.workbook or find_base_workbook(args.output_dir)
-        if base is None:
-            log.error("No workbook found in %s. Put the latest Excel file there.",
-                      args.output_dir)
-            return 1
-
-        run(old, new, base, args.output_dir, dt.date.today())
+        out, all_ok = run(old, new, args.workbook, args.output_dir, dt.date.today())
         if not testing:
             state_file.write_text(json.dumps(new, indent=2), "utf-8")
+        say("")
+        if out is None:
+            say("RESULT: nothing to do. Your Excel files are already up to date.")
+        elif all_ok:
+            say("RESULT: DONE. New file created and checked:")
+            say(f"  {out}")
+        else:
+            say("RESULT: New file created, but some checks failed (see PROBLEM lines above):")
+            say(f"  {out}")
         return 0
-    except Exception:
-        log.exception("Update failed; data.json state left unchanged so it retries next run.")
+    except Exception as exc:  # noqa: BLE001 - report any failure in plain words
+        log.exception("Update failed")
+        say("")
+        say(f"RESULT: FAILED. {exc}")
+        say("Nothing was saved and nothing was marked as done, so the next run tries again.")
+        say(f"Details are in {STATE_DIR / 'update_excel.log'}")
         return 1
 
 

@@ -1,5 +1,11 @@
 @echo off
-rem Double-click to check for an approved update right now instead of waiting for 12:55.
-schtasks /Run /TN "DCBenchmarking Excel update"
-echo Started. If there was a new approved update, the new Excel file appears in the Claude versions folder within a minute.
-pause
+rem Double-click to check for an approved update now and create the new Excel file.
+rem The window shows each step and a check of the new file, and stays open at the end.
+title DC Benchmarking - Excel update
+if exist "%LOCALAPPDATA%\DCBenchmarking\run_now.bat" (
+    call "%LOCALAPPDATA%\DCBenchmarking\run_now.bat"
+) else (
+    echo The updater is not installed yet. Double-click install.bat first.
+    echo.
+    pause
+)
