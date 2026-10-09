@@ -2,7 +2,7 @@
   "_readme": "Single source of truth for the dashboard. Values are per company, keyed by company name. Money in USD millions unless the metric name says otherwise. Percentages and multiples are stored as display strings (e.g. '48.7%', '3.2x'); use 'N/A' or '—' when not available. See AGENT_INSTRUCTIONS.md before editing.",
   "companies": [
     {
-      "name": "Usamah",
+      "name": "Sreekanth",
       "period": "FY2024",
       "color": "#828EFF",
       "logo": "logos/equinix.png"
